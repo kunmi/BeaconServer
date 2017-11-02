@@ -37,6 +37,9 @@ ehthumbs.db
 Thumbs.db
 
 /node_modules
-/DB/diagnostic.data
+/DB/diagnostic.data/
 .idea
+/DB/diagnostic.data/metrics.interim
+.idea/workspace.xml
+
 
