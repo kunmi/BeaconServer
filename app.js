@@ -35,6 +35,8 @@ const app = express();
 
 const users = require('./routes/users');
 
+
+
 // PORT NUMER
 const port = 3000;
 
@@ -66,9 +68,18 @@ app.use('/users',users);
 //INDEX ROUT
 app.get('/', (req,res) => {
 
-    res.send('Invalid Endpoint');
+    //res.send('Invalid Endpoint');
+    res.sendFile(path.join(__dirname, 'public/index.html'));
 
 });
+
+
+app.get('*', (req,res) => {
+    res.redirect('/');
+
+});
+
+
 
 //START SERVER
 app.listen(port, () => {

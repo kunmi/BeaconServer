@@ -1,12 +1,16 @@
 
+<main>
+<div class="container">
 
-<h2 class="page-header">Register</h2>
+  <h2 class="page-header">Register</h2>
 
-<form (submit)="onRegisterSubmit()" >
+<form (submit)="onRegisterSubmit()">
 
 <div class="form-group">
+
   <label >Name</label>
   <input type="text" [(ngModel)]="model.name"  name="name" class="form-control" id="name" required="required">
+
 </div>
 
   <div class="form-group">
@@ -25,8 +29,11 @@
     <input type="password" [(ngModel)]="model.password"  name="password" class="form-control" id="password" required="required">
   </div>
 
-
   <input type="submit" class="btn btn-primary" value="Submit">
 
 
 </form>
+
+
+</div>
+</main>
