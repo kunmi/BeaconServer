@@ -5,8 +5,9 @@ export class User {
   name : String;
   username: String;
   email: String;
-  password: String;
-  type? : String;
+  password?: String;
+  superuser? : String;
+  activated?: Boolean
 
   constructor(){
 

@@ -95,4 +95,32 @@ router.get('/profile', passport.authenticate('jwt', {session:false}), (req, res,
 
 
 
+router.get('/', passport.authenticate('jwt', {session:false}), (req, res, next) => {
+
+    //ToDo
+    //Check if user can actually access such data
+
+    User.getAllUsers((err, result ) => {
+
+        if(err) throw err;
+
+        var users = [];
+
+        result.forEach(function (user) {
+            users.push({
+                _id : user._id,
+                name: user.name,
+                email: user.email,
+                username: user.username,
+            });
+        });
+
+        res.send(users);
+    });
+
+
+});
+
+
+
 module.exports = router;

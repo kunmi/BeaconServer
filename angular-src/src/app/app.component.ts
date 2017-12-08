@@ -2,8 +2,17 @@ import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  template: `
+   <!--The content below is only a placeholder and can be replaced.-->
+<app-navbar></app-navbar>
+
+<div class="container-fluid" style="padding-top: 30px">
+  <flash-messages></flash-messages>
+  <router-outlet></router-outlet>
+</div>
+
+<app-footer></app-footer>
+  `
 })
 export class AppComponent {
   title = 'app';
