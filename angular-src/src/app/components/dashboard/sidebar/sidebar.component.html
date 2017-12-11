@@ -1,0 +1,47 @@
+<ul class="nav nav-pills flex-column">
+  <li class="nav-item">
+    <a class="nav-link active" [routerLinkActive] = "['active']" [routerLink]="['overview']">Overview <span class="sr-only">(current)</span></a>
+  </li>
+</ul>
+
+<ul class="nav nav-pills flex-column">
+  <li class="nav-item" *ngIf="authService.loggedInandSpecial()">
+    <a class="nav-link" [routerLinkActive] = "['active']" [routerLink]="['users']">Users</a>
+  </li>
+  <li class="nav-item" *ngIf="authService.loggedInandSpecial()">
+    <a class="nav-link" [routerLinkActive] = "['active']" [routerLink]="['projects']">Projects</a>
+  </li>
+  <li class="nav-item" *ngIf="authService.loggedInandSpecial()">
+    <a class="nav-link" [routerLinkActive] = "['active']" [routerLink]="[{outlets:{dash:['users']}}]">Manage Projects</a>
+  </li>
+</ul>
+
+<ul class="nav nav-pills flex-column">
+  <li class="nav-item">
+    <a class="nav-link" [routerLink]="['x']">Projects</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#">Maps</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#">Beacons</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#">General Statistics</a>
+  </li>
+
+</ul>
+
+<ul class="nav nav-pills flex-column">
+  <li class="nav-item">
+    <a class="nav-link" href="#">Maps</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#">Beacons</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="#">Stats and Debugging</a>
+  </li>
+
+
+</ul>
