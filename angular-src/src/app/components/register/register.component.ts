@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import {FormControl,  Validators} from '@angular/forms';
 import {User} from "../../models/User";
 import {ValidateService} from "../../services/validate.service";
 import {FlashMessagesService} from "angular2-flash-messages";
 import {AuthService} from "../../services/auth.service";
 import {Router} from "@angular/router";
+
 
 @Component({
   selector: 'app-register',
@@ -14,12 +16,21 @@ export class RegisterComponent implements OnInit {
 
   model = new User();
 
+  /** Needed for Google Email Validator **/
+  emailFormControl = new FormControl('', [
+    Validators.required,
+    Validators.email,
+  ]);
+
   constructor(
     private validateService: ValidateService,
     private flashMessagesService: FlashMessagesService,
     private authService: AuthService,
     private router: Router
-    ) { }
+    ) {
+    this.model.name = "Hello Boys";
+
+  }
 
   ngOnInit() {
   }

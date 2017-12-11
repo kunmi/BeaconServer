@@ -1,16 +1,15 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import {FormsModule} from "@angular/forms";
-import {HttpModule} from "@angular/http";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import { HttpClientModule, HttpClient } from '@angular/common/http'
 import {FlashMessagesModule} from "angular2-flash-messages";
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { HomeComponent } from './components/home/home.component';
-import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { ProfileComponent } from './components/dashboard/profile/profile.component';
 
 import {ValidateService} from "./services/validate.service";
 import {AuthService} from "./services/auth.service";
@@ -28,7 +27,6 @@ import {DashboardModule} from "./components/dashboard/dashboard.module";
     AppComponent,
     NavbarComponent,
     LoginComponent,
-    RegisterComponent,
     HomeComponent,
     FooterComponent
   ],
@@ -36,9 +34,11 @@ import {DashboardModule} from "./components/dashboard/dashboard.module";
     BrowserModule,
     FormsModule,
     FlashMessagesModule,
-    HttpModule,
+    HttpClientModule,
     AppRoutingModule,
-    DashboardModule
+    DashboardModule,
+    BrowserAnimationsModule,
+    ReactiveFormsModule // NOt sure I need this --> for Material
   ],
   providers: [ValidateService, AuthService, AuthGuard, Values],
   bootstrap: [AppComponent]

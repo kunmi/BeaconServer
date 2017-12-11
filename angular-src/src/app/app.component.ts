@@ -6,7 +6,7 @@ import { Component } from '@angular/core';
    <!--The content below is only a placeholder and can be replaced.-->
 <app-navbar></app-navbar>
 
-<div class="container-fluid" style="padding-top: 30px">
+<div class="container-fluid" style="padding-top: 10px; padding-bottom: 20px">
   <flash-messages></flash-messages>
   <router-outlet></router-outlet>
 </div>

@@ -51,7 +51,7 @@ module.exports.getUserByUsername = function (username, callback) {
 
 module.exports.addUser = function (newUser, callback) {
 
-    console.log(newUser);
+    //console.log(newUser);
 
 
     bcrypt.genSalt (10, (err,salt) =>{

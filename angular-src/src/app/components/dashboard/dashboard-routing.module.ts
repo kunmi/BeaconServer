@@ -6,14 +6,15 @@ import {DashUsersComponent} from "./dash-users/dash-users.component";
 import {NgModule} from "@angular/core";
 import {ProfileComponent} from "./profile/profile.component";
 import {UserProvider} from "../../services/user.service";
+import {DashOverviewComponent} from "./dash-overview/dash-overview.component";
 
 const dashRoutes: Routes = [
 
   { path: '', component: DashboardComponent, canActivate:[AuthGuard],  children:[
-      {path: '', redirectTo: 'overview',
-        pathMatch: 'full'},
+      {path: '', redirectTo: "overview", pathMatch:"full"},
       {path: 'users',component: DashUsersComponent},
-      {path: 'overview', component: DashHomeComponent}
+      {path: 'overview', component: DashOverviewComponent},
+      {path: 'x', component: DashUsersComponent}
     ]},
 ];
 

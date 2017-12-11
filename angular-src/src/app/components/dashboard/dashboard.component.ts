@@ -9,7 +9,7 @@ import { Component, OnInit } from '@angular/core';
     <app-sidebar></app-sidebar>
   </nav>
 
-  <div class="col-sm-9 offset-sm-3 col-md-10 offset-md-2">
+  <div class="col-sm-9 offset-sm-0 col-md-10">
     <router-outlet></router-outlet>
   </div>
 </div>

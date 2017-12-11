@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import {Http, Headers} from "@angular/http";
+//import {Http, Headers} from "@angular/http";
+import { HttpClientModule, HttpClient, HttpHeaders } from '@angular/common/http'
 import 'rxjs/add/operator/map';
 import {User} from "../models/User";
 import {tokenNotExpired} from 'angular2-jwt';
@@ -11,30 +12,30 @@ export class AuthService {
   authToken: any;
   user: User;
 
-  constructor(private http:Http) {}
+  constructor(private http:HttpClient) {}
 
   registerUser(user){
-    let headers = new Headers();
+    let headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
     return this.http.post('http://localhost:3000/users/register', user, {headers: headers})
-      .map(res => res.json());
+      .map(res => res);
   }
   authenticateUser(user){
-    let headers = new Headers();
+    let headers = new HttpHeaders();
     this.loadToken();
-    headers.append('authorization', this.authToken);
-    headers.append('Content-Type', 'application/json');
+    headers = headers.append('authorization', this.authToken);
+    headers = headers.append('Content-Type', 'application/json');
     return this.http.post('http://localhost:3000/users/authenticate', user, {headers: headers})
-      .map(res => res.json());
+      .map(res => res);
   }
 
   getProfile(){
-    let headers = new Headers();
+    let headers = new HttpHeaders();
     this.loadToken();
-    headers.append('Authorization', this.authToken);
-    headers.append('Content-Type', 'application/json');
+    headers = headers.append('Authorization', this.authToken);
+    headers = headers.append('Content-Type', 'application/json');
     return this.http.get('http://localhost:3000/users/profile', {headers: headers})
-      .map(res => res.json());
+      .map(res => res);
   }
 
 

@@ -12,7 +12,7 @@ const appRoutes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
-  { path: 'dashboard', loadChildren: 'app/components/dashboard/dashboard.module#DashboardModule', data: { preload: true }},
+  { path: 'dashboard', loadChildren: 'app/components/dashboard/dashboard.module#DashboardModule'},
   { path: 'profile', component: ProfileComponent, canActivate:[AuthGuard] },
   //{ path: '**', component: ProfileComponent }
 ];
@@ -21,7 +21,7 @@ const appRoutes: Routes = [
 @NgModule({
   imports: [
     RouterModule.forRoot(
-      appRoutes, {enableTracing: true}
+      appRoutes, {enableTracing: false}
     )
   ],
   exports: [
