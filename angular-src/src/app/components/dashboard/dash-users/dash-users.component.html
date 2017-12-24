@@ -6,6 +6,8 @@
     <mat-form-field>
       <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
     </mat-form-field>
+
+
   </div>
 
   <div class="container mat-elevation-z8">
@@ -14,46 +16,61 @@
 
       <!-- Name Column -->
       <ng-container matColumnDef="name">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> Progress </mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
         <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
       </ng-container>
 
       <!-- Username Column -->
       <ng-container matColumnDef="username">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Username </mat-header-cell>
         <mat-cell *matCellDef="let row"> {{row.username}} </mat-cell>
       </ng-container>
 
       <!-- Color Column -->
       <ng-container matColumnDef="email">
-        <mat-header-cell *matHeaderCellDef mat-sort-header> Color </mat-header-cell>
+        <mat-header-cell *matHeaderCellDef mat-sort-header> E-Mail </mat-header-cell>
         <mat-cell *matCellDef="let row" > {{row.email}} </mat-cell>
       </ng-container>
 
+
+      <!-- Color Column -->
+      <ng-container matColumnDef="action">
+        <mat-header-cell *matHeaderCellDef mat-sort-header>  </mat-header-cell>
+        <mat-cell *matCellDef="let row" > {{row.email}} </mat-cell>
+      </ng-container>
+
+
       <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
       <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{'highlight': selectedRowIndex == row.id}"
-               (click)="highlight(row)">
+               (click)="highlight(row)" (dblclick)="openEditUserDialog(row)">
       </mat-row>
+
+
+
+
     </mat-table>
 
-    <div class="button-row" style="float: right">
-      <button mat-fab color="primary">+</button>
+
+
+
+
+
+    <div class="button-row" style="float: right" *ngIf="canManageUsers">
+      <button mat-fab color="primary" (click)="openCreateUserDialog()">+</button>
     </div>
 
 
-    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+    <mat-paginator #paginator
+                   [pageSize]="10"
+                   [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
   </div>
+
 
 
 </div>
 
 
 <div class="spaceTop">
-  <h2>Create Users</h2>
-
-  <mat-card>
-    <app-register></app-register>
-  </mat-card>
 
 </div>
 

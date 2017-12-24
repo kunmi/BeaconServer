@@ -1,15 +1,17 @@
 
-export class User {
+export interface User {
 
-  _id: Number;
+  _id?: Number;
   name : String;
   username: String;
   email: String;
   password?: String;
-  superuser? : String;
-  activated?: Boolean
+  activated?: Boolean;
+  roles: {
+    manage_users : false,
+    manage_roles : false,
+    manage_projects: false
+  };
+  isadmin: false;
 
-  constructor(){
-
-  }
 }

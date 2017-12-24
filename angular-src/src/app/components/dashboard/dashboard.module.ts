@@ -45,7 +45,8 @@ import {
   MatStepperModule,
 } from '@angular/material';
 import {CdkTableModule} from '@angular/cdk/table';
-import {RegisterComponent} from "../register/register.component";
+import {RegisterComponent} from "./register/register.component";
+import {YesNoDialogComponent} from "../util.component";
 
 @NgModule({
   exports: [
@@ -94,17 +95,17 @@ export class SharedMaterialModule {
     DashOverviewComponent,
     DashUsersComponent,
     ProfileComponent,
-    RegisterComponent
+    RegisterComponent,
+    YesNoDialogComponent
   ],
+  entryComponents:[YesNoDialogComponent],
   imports: [
     DashboardRoutingModule,
    CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    FlashMessagesModule,
     HttpClientModule,
     SharedMaterialModule
-
   ]
 })
 
