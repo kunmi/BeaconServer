@@ -34,6 +34,7 @@ mongoose.connection.on('error', (err) => {
 const app = express();
 
 const users = require('./routes/users');
+const projects = require('./routes/projects');
 
 
 
@@ -63,7 +64,7 @@ require('./config/passport')(passport);
 
 //ROUTE LINK
 app.use('/users',users);
-
+app.use('/projects', projects);
 
 //INDEX ROUT
 app.get('/', (req,res) => {

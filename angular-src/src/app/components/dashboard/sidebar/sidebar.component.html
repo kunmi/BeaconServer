@@ -4,16 +4,14 @@
   </li>
 </ul>
 
-<ul class="nav nav-pills flex-column">
-  <li class="nav-item" *ngIf="authService.loggedInandSpecial()">
+<ul class="nav nav-pills flex-column" *ngIf="isadmin">
+  <li class="nav-item" *ngIf="isadmin">
     <a class="nav-link" [routerLinkActive] = "['active']" [routerLink]="['users']">Users</a>
   </li>
-  <li class="nav-item" *ngIf="authService.loggedInandSpecial()">
+  <li class="nav-item" *ngIf="isadmin">
     <a class="nav-link" [routerLinkActive] = "['active']" [routerLink]="['projects']">Projects</a>
   </li>
-  <li class="nav-item" *ngIf="authService.loggedInandSpecial()">
-    <a class="nav-link" [routerLinkActive] = "['active']" [routerLink]="[{outlets:{dash:['users']}}]">Manage Projects</a>
-  </li>
+
 </ul>
 
 <ul class="nav nav-pills flex-column">

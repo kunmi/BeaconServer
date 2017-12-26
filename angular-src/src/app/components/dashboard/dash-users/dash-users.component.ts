@@ -3,7 +3,7 @@ import {AuthService} from "../../../services/auth.service";
 import {UserProvider} from "../../../services/user.service";
 import {MatPaginator, MatSnackBar, MatSort, MatTableDataSource} from '@angular/material';
 import {MatDialog} from "@angular/material";
-import {RegisterComponent} from "../register/register.component";
+import {RegisterComponent} from "./register/register.component";
 import {FlashMessagesService} from "angular2-flash-messages";
 
 
@@ -36,10 +36,7 @@ export class DashUsersComponent implements OnInit {
     this.getUsersFromServer();
     this.authService.getProfile().subscribe(result=>{
       this.presentUser = result.user;
-      if(result.user.roles.manage_users)
-      {
-        this.canManageUsers = true;
-      }
+      this.canManageUsers = result.user.roles.manage_users;
     });
 
   }

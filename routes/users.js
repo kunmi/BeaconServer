@@ -145,7 +145,7 @@ router.get('/', passport.authenticate('jwt', {session:false}), (req, res, next) 
                 res.send([]);
                 return
             }
-            ;
+
 
             var users = [];
 
@@ -209,7 +209,7 @@ router.patch('/:id', passport.authenticate('jwt', {session:false}), (req, res, n
                 "name" : req.body.name,
                 "username" : req.body.username,
                 "email" : req.body.email
-            }
+            };
 
             if(presentUser.roles.manage_roles)
             {

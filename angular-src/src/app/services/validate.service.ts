@@ -33,5 +33,21 @@ export class ValidateService {
     return re.test(email);
   }
 
+  validateProjectRegistration(project)
+  {
+    if(project.name == undefined || project.name.length == 0)
+    {
+      return false;
+    }
+
+    else if (project.email == undefined || project.email.length == 0)
+    {
+      return false;
+    }
+
+    return true;
+
+  }
+
 
 }

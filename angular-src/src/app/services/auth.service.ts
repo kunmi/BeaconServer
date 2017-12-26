@@ -14,33 +14,6 @@ export class AuthService {
 
   constructor(private http:HttpClient) {}
 
-  registerUser(user){
-    let headers = new HttpHeaders();
-    this.loadToken();
-    headers = headers.append('Authorization', this.authToken);
-    headers.append('Content-Type', 'application/json');
-    return this.http.post<RegisterResultData>('http://localhost:3000/users/register', user, {headers: headers})
-      .map(res => res);
-  }
-
-  updateUser(user){
-    let headers = new HttpHeaders();
-    this.loadToken();
-    headers = headers.append('Authorization', this.authToken);
-    headers.append('Content-Type', 'application/json');
-    return this.http.patch<RegisterResultData>('http://localhost:3000/users/'+user._id, user, {headers: headers})
-      .map(res => res);
-  }
-
-  deleteUser(user){
-    let headers = new HttpHeaders();
-    this.loadToken();
-    headers = headers.append('Authorization', this.authToken);
-    headers.append('Content-Type', 'application/json');
-    return this.http.delete<RegisterResultData>('http://localhost:3000/users/'+user._id,  {headers: headers})
-      .map(res => res);
-  }
-
   authenticateUser(user){
     let headers = new HttpHeaders();
     //this.loadToken();
@@ -51,23 +24,6 @@ export class AuthService {
         res => res);
   }
 
-  getProfile(){
-    let headers = new HttpHeaders();
-    this.loadToken();
-    headers = headers.append('Authorization', this.authToken);
-    headers = headers.append('Content-Type', 'application/json');
-    return this.http.get<ProfileResultData>('http://localhost:3000/users/profile', {headers: headers})
-      .map(res => res);
-  }
-
-  getUser(id){
-    let headers = new HttpHeaders();
-    this.loadToken();
-    headers = headers.append('Authorization', this.authToken);
-    headers = headers.append('Content-Type', 'application/json');
-    return this.http.get<any>('http://localhost:3000/users/'+id, {headers: headers})
-      .map(res => res);
-  }
 
 
   loadToken(){
@@ -88,7 +44,14 @@ export class AuthService {
     return tokenNotExpired('id_token');
   }
 
-
+  getProfile(){
+    let headers = new HttpHeaders();
+    this.loadToken();
+    headers = headers.append('Authorization', this.authToken);
+    headers = headers.append('Content-Type', 'application/json');
+    return this.http.get<ProfileResultData>('http://localhost:3000/users/profile', {headers: headers})
+      .map(res => res);
+  }
 
 
   storeUserData(token, user){
@@ -101,7 +64,6 @@ export class AuthService {
   }
 
   logout(){
-
     this.authToken = null;
     this.user = null;
     localStorage.clear();
@@ -110,9 +72,6 @@ export class AuthService {
 
 }
 
-export interface ProfileResultData {
-  user: any;
-}
 
 export interface AuthenticateResultData{
 
@@ -122,8 +81,7 @@ export interface AuthenticateResultData{
   msg? : string
 }
 
-export interface RegisterResultData{
-  success: boolean;
-  msg?: string
+export interface ProfileResultData {
+  user: any;
 }
 
