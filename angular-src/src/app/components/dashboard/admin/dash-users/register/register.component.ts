@@ -1,14 +1,14 @@
 import {Component, Inject, OnInit} from '@angular/core';
 import {FormControl,  Validators} from '@angular/forms';
-import {User} from "../../../../models/User";
-import {ValidateService} from "../../../../services/validate.service";
+import {User} from "../../../../../models/User";
+import {ValidateService} from "../../../../../services/validate.service";
 import {FlashMessagesService} from "angular2-flash-messages";
-import {AuthService} from "../../../../services/auth.service";
+import {AuthService} from "../../../../../services/auth.service";
 import {Router} from "@angular/router";
 import {MatDialogRef, MAT_DIALOG_DATA, MatDialog} from "@angular/material";
 import {Observable} from "rxjs/Observable";
-import {YesNoDialogComponent, YesNoDialogData} from "../../../util.component";
-import {UserProvider} from "../../../../services/user.service";
+import {YesNoDialogComponent, YesNoDialogData} from "../../../../util.component";
+import {UserProvider} from "../../../../../services/user.service";
 
 
 @Component({

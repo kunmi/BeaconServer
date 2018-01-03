@@ -58,12 +58,37 @@ export class ProjectProvider{
   }
 
 
+  addToProject(thisUser, project){
+    let headers = new HttpHeaders();
+    this.authService.loadToken();
+    headers = headers.append('Authorization', this.authService.authToken);
+    headers.append('Content-Type', 'application/json');
+    return this.http.post<AddUserToProjectResultData>('http://localhost:3000/projects/'+project._id+'/adduser', thisUser,{headers: headers})
+      .map(res => res);
+  }
+
+  removeFromProjects(thisUser, project){
+    let headers = new HttpHeaders();
+    this.authService.loadToken();
+    headers = headers.append('Authorization', this.authService.authToken);
+    headers.append('Content-Type', 'application/json');
+    return this.http.post<AddUserToProjectResultData>('http://localhost:3000/projects/'+project._id+'/removeuser', thisUser,{headers: headers})
+      .map(res => res);
+  }
+
+
 
 }
 
 export interface RegisterResultData{
   success: boolean;
   msg?: string
+}
+
+export interface AddUserToProjectResultData{
+  success: boolean;
+  msg?: string;
+  users?: any[];
 }
 
 

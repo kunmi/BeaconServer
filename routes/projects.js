@@ -178,10 +178,162 @@ router.delete('/:id', passport.authenticate('jwt', {session:false}), (req, res, 
     }
 
     else{
-        res.send(401);
+        res.sendStatus(401);
     }
 
 });
+
+
+
+//Add User to Project
+router.post('/:id/adduser', passport.authenticate('jwt', {session:false}), (req, res, next) => {
+
+    let presentUser = req.user;
+
+    if(presentUser)
+    {
+
+        if(presentUser.roles.manage_projects)
+        {
+            let projectId =  req.params.id;
+            User.getUserByID(ObjectId(req.body._id), (err, user)=>{
+
+                if(err)
+                {
+                    res.send({success: false, msg : err.message});
+                    console.error(err);
+                }
+
+                else
+                {
+                    Project.addUserToProject(ObjectId(projectId), ObjectId(user._id), (err, nmods)=>{
+
+                            if(err)
+                            {
+                                res.send({success: false, msg : err.message});
+                            }
+                            else
+                            {
+                                if(nmods>0)
+                                {
+                                    Project.getProjectByID(projectId, (err, project)=>{
+                                        if(err)
+                                        {
+                                            res.send({success:false, msg : "Error occurred retrieving updated list"});
+                                        }
+                                        else
+                                        {
+                                            res.send({success: true, users : project.users});
+
+                                        }
+                                    });
+
+                                }
+                                else
+                                {
+                                    res.send({success: false, msg : "user already added"});
+                                }
+                            }
+                    });
+                }
+
+
+            });
+
+
+        }
+        else
+        {
+            res.send({success: false, msg: "Not Permitted"});
+        }
+
+    }
+    else
+    {
+        res.sendStatus(401);
+    }
+
+
+
+});
+
+//Add User to Project
+router.post('/:id/removeuser', passport.authenticate('jwt', {session:false}), (req, res, next) => {
+
+    let presentUser = req.user;
+
+    if(presentUser)
+    {
+
+        if(presentUser.roles.manage_projects)
+        {
+            let projectId =  req.params.id;
+            User.getUserByID(ObjectId(req.body._id), (err, user)=>{
+
+                if(err)
+                {
+                    res.send({success: false, msg : err.message});
+                    console.error(err);
+                }
+
+                else
+                {
+                    Project.removeUserFromProject(ObjectId(projectId), ObjectId(user._id), (err, nmods)=>{
+
+                        if(err)
+                        {
+                            res.send({success: false, msg : err.message});
+                        }
+                        else
+                        {
+                            if(nmods>0)
+                            {
+                                res.send({success: true});
+
+                                /* EXTRA DB call not needed
+                                Project.getProjectByID(projectId, (err, project)=>{
+                                    if(err)
+                                    {
+                                        res.send({success:false, msg : "Error occurred retrieving updated list"});
+                                    }
+                                    else
+                                    {
+                                        res.send({success: true, users : project.users});
+
+                                    }
+                                });
+                                */
+
+                            }
+                            else
+                            {
+                                res.send({success: false, msg : "user already removed"});
+                            }
+                        }
+                    });
+                }
+
+
+            });
+
+
+        }
+        else
+        {
+            res.send({success: false, msg: "Not Permitted"});
+        }
+
+    }
+    else
+    {
+        res.sendStatus(401);
+    }
+
+
+
+});
+
+
 
 
 module.exports = router;

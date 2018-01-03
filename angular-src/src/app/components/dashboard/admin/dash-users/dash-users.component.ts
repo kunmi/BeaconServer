@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import {AuthService} from "../../../services/auth.service";
-import {UserProvider} from "../../../services/user.service";
+import {AuthService} from "../../../../services/auth.service";
+import {UserProvider} from "../../../../services/user.service";
 import {MatPaginator, MatSnackBar, MatSort, MatTableDataSource} from '@angular/material';
 import {MatDialog} from "@angular/material";
 import {RegisterComponent} from "./register/register.component";

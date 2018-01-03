@@ -1,12 +1,14 @@
 import {RouterModule, Routes} from "@angular/router";
 import {DashboardComponent} from "./dashboard.component";
 import {AuthGuard} from "../../guards/auth.guard";
-import {DashUsersComponent} from "./dash-users/dash-users.component";
+import {DashUsersComponent} from "./admin/dash-users/dash-users.component";
 import {NgModule} from "@angular/core";
 import {UserProvider} from "../../services/user.service";
-import {DashOverviewComponent} from "./dash-overview/dash-overview.component";
-import {DashProjectsComponent} from "./dash-projects/dash-projects.component";
+import {DashOverviewComponent} from "./client/dash-overview/dash-overview.component";
+import {DashProjectsComponent} from "./admin/dash-projects/dash-projects.component";
 import {ProjectProvider} from "../../services/project.service";
+import {ProfileComponent} from "./client/profile/profile.component";
+import {DashProjectHomeComponent} from "./admin/dash-projects/home/dash-project-home/dash-project-home.component";
 
 const dashRoutes: Routes = [
 
@@ -15,6 +17,10 @@ const dashRoutes: Routes = [
       {path: 'overview', component: DashOverviewComponent},
       {path: 'users',component: DashUsersComponent},
       {path: 'projects', component: DashProjectsComponent},
+      {path: 'projects/:id', component: DashProjectHomeComponent},
+
+
+
       {path: 'x', component: DashUsersComponent}
     ]},
 ];

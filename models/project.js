@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 const dbconfig = require('../config/db');
-var ObjectId = require('mongodb').ObjectID;
-const User = require('./user')
+const User = require('./user');
+var hat = require('hat');
+
 
 //Project Schema
 const ProjectSchema =mongoose.Schema({
@@ -20,17 +21,17 @@ const ProjectSchema =mongoose.Schema({
     }
     ,
     users: [
-        {
+            {
             user_id: {
                 type: mongoose.Schema.Types.ObjectId,
-                ref : User
+                ref : User,
+                unique: true
             },
             token: String }
         ],
     beacons: [{
         type: Array,
         default:[]
-
     }]
 
 
@@ -59,3 +60,47 @@ module.exports.deleteProject = function (id, callback) {
 module.exports.getAllProject = (callback)=>{
     Project.find({},callback);
 };
+
+/************ USER -> PRoject ***************************/
+module.exports.addUserToProject =  function(id, user, callback){
+
+    Project.update({
+        _id: id,
+        'users.user_id': {
+            $ne: user
+        }
+    }, {
+        $push: {
+            users: {
+                user_id: user,
+                token: hat()
+            }
+        }
+    }).then((raw) => {
+        callback(null,raw.nModified);
+    }).catch(error=>{
+            callback(error, null);
+    });
+
+};
+
+module.exports.removeUserFromProject =  function(id, user, callback){
+
+    Project.update({
+        _id: id,
+        'users.user_id': {
+            $eq: user
+        }
+    }, {
+        $pull: {
+            users: {
+                user_id: user
+            }
+        }
+    }).then((raw) => {
+        callback(null,raw.nModified);
+    }).catch(error=>{
+        callback(error, null);
+    });
+
+}

@@ -1,16 +1,20 @@
 <main class="container">
 
 <div>
-<h2>Available Users</h2>
-  <div class="">
-    <mat-form-field>
-      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
-    </mat-form-field>
+<h3>Available Users</h3>
+  <br/>
 
 
-  </div>
+  <!-- class="container mat-elevation-z8" -->
+  <mat-card class="container">
+  <div >
 
-  <div class="container mat-elevation-z8">
+    <div class="">
+      <mat-form-field>
+        <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+      </mat-form-field>
+    </div>
+
 
     <mat-table [dataSource]="dataSource" matSort>
 
@@ -60,7 +64,7 @@
                    [pageSize]="10"
                    [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
   </div>
-
+  </mat-card>
 
 
 </div>

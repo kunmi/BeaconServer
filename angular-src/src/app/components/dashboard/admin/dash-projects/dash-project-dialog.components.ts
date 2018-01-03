@@ -1,78 +1,76 @@
 import {Component, Inject, OnInit, ViewChild} from '@angular/core';
-import {AuthService} from "../../../services/auth.service";
+import {AuthService} from "../../../../services/auth.service";
 import {MAT_DIALOG_DATA, MatDialog, MatDialogRef} from "@angular/material";
-import {Router} from "@angular/router";
-import {ValidateService} from "../../../services/validate.service";
-import {UserProvider} from "../../../services/user.service";
+import {ActivatedRoute, Router} from "@angular/router";
+import {ValidateService} from "../../../../services/validate.service";
 import {FlashMessagesService} from "angular2-flash-messages";
-import {YesNoDialogComponent, YesNoDialogData} from "../../util.component";
+import {YesNoDialogComponent, YesNoDialogData} from "../../../util.component";
 import {FormControl, Validators} from "@angular/forms";
-import {User} from "../../../models/User";
-import {Project} from "../../../models/project";
-import {ProjectProvider} from "../../../services/project.service";
+import {Project} from "../../../../models/project";
+import {ProjectProvider} from "../../../../services/project.service";
+import {User} from "../../../../models/User";
+import {UserProvider} from "../../../../services/user.service";
+import {Observable} from "rxjs/Observable";
 
 @Component({
   selector: 'dash-project-dialog',
-  template: `
-  
-  <main>
-<div class="container">
+  template: `<main>
+    <div class="container">
 
-<form (submit)="onRegisterSubmit()"  class="custom-form">
+      <form (submit)="onRegisterSubmit()"  class="custom-form">
 
 
-    <div  >
+        <div  >
 
-      <h4>Project Details</h4>
+          <h4>Project Details</h4>
 
-  <mat-form-field class="input-full-width">
-    <input matInput placeholder="Name *" [(ngModel)]="model.name"  name="name"  id="name" [disabled]="disable_info" >
-  </mat-form-field>
+          <mat-form-field class="input-full-width">
+            <input matInput placeholder="Name *" [(ngModel)]="model.name"  name="name"  id="name" [disabled]="disable_info" >
+          </mat-form-field>
 
-      <mat-form-field class="input-full-width">
-        <input matInput placeholder="E-Mail*" [formControl]="emailFormControl" [(ngModel)]="model.email" name="email" id="email" [disabled]="disable_info">
-        <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
-          Please enter a valid email address
-        </mat-error>
-        <mat-error *ngIf="emailFormControl.hasError('required')">
-          Email is <strong>required</strong>
-        </mat-error>
-      </mat-form-field>
+          <mat-form-field class="input-full-width">
+            <input matInput placeholder="E-Mail*" [formControl]="emailFormControl" [(ngModel)]="model.email" name="email" id="email" [disabled]="disable_info">
+            <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
+              Please enter a valid email address
+            </mat-error>
+            <mat-error *ngIf="emailFormControl.hasError('required')">
+              Email is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+          
+          <mat-form-field class="input-full-width">
+            <textarea matInput placeholder="Description" [(ngModel)]="model.description"  name="description" id="description"  [disabled]="disable_info" rows="7"></textarea>
+          </mat-form-field>
+
+        </div>
+
+        <br/>
+
+        <br/>
+
+        <div class="row">
+
+          <div class="col-4">
+            <input *ngIf="!inputs_disabled" type="submit" class="btn btn-primary" value="{{submitText}}" >
+          </div>
+          
+          <div class="col" *ngIf="data">
+            <div style="float: right" *ngIf="can_delete">
+              <button  mat-raised-button color="warn" [disabled]="!can_delete" type="button" class="btn btn-primary" (click)="openDeleteDialog()">Delete</button>
+            </div>
+          </div>
+
+        </div>
 
 
-  <mat-form-field class="input-full-width">
-    <input matInput placeholder="Description: " [(ngModel)]="model.description"  name="description" id="description"  [disabled]="disable_info">
-  </mat-form-field>
+      </form>
 
+      <br/>
+      <br/>
+      <button *ngIf="data" mat-button color="primary" (click)="gotoProjectHome()">Go to {{model.name}}'s home</button>
     </div>
-  
-  
-  <br/>
-  <br/>
 
-  <div class="row">
-
-    <div class="col-4">
-      <input *ngIf="!inputs_disabled" type="submit" class="btn btn-primary" value="{{submitText}}" >
-    </div>
-
-    <div class="col" *ngIf="data">
-      <div style="float: right" *ngIf="can_delete">
-        <button  mat-raised-button color="warn" [disabled]="!can_delete" type="button" class="btn btn-primary" (click)="openDeleteDialog()">Delete</button>
-      </div>
-    </div>
-
-  </div>
-
-
-</form>
-</div>
-     
-</main>
-
-  
-  
-  `
+  </main>`
 })
 
 export class DashProjectDialogComponents implements OnInit{
@@ -82,6 +80,8 @@ export class DashProjectDialogComponents implements OnInit{
   disable_info = false;
   can_delete = true;
 
+
+  users : User[];
 
   submitText = "Create Project";
 
@@ -95,8 +95,8 @@ export class DashProjectDialogComponents implements OnInit{
     private validateService: ValidateService,
     private flashMessagesService: FlashMessagesService,
     private projectProvider: ProjectProvider,
+    private userProvider: UserProvider,
     private authService: AuthService,
-    private router: Router,
     public dialog: MatDialog,
     public dialogRef: MatDialogRef<DashProjectDialogComponents>,
     @Inject(MAT_DIALOG_DATA) public data: any
@@ -116,6 +116,10 @@ export class DashProjectDialogComponents implements OnInit{
         result.user.roles.manage_roles&&
         result.user.roles.manage_projects&&
         result.user.isadmin;
+    });
+
+    userProvider.getUsers().subscribe(result=>{
+      this.users  = result;
     });
 
     if (this.data)
@@ -203,8 +207,6 @@ export class DashProjectDialogComponents implements OnInit{
 
   }
 
-
-
   deleteDialogData : YesNoDialogData = {
     data: {},
     message: "Are you sure you wan to delete this project?",
@@ -215,7 +217,7 @@ export class DashProjectDialogComponents implements OnInit{
   openDeleteDialog(): void{
 
     let dialogRef = this.dialog.open(YesNoDialogComponent, {
-      width: '250px',
+      width: '350px',
       data: this.deleteDialogData
     });
 
@@ -245,6 +247,12 @@ export class DashProjectDialogComponents implements OnInit{
 
   }
 
+  gotoProjectHome(){
+    this.dialogRef.close({navigate: true, id: this.model._id});
+    //this.router.navigate(["./project", this.model._id],{relativeTo: this.r});
+}
+
+
 
 
   initProject(){
@@ -257,6 +265,9 @@ export class DashProjectDialogComponents implements OnInit{
 
     return newProject;
   }
+
+
+
 
 
 

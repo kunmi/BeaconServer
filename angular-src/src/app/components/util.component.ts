@@ -7,7 +7,7 @@ import {MAT_DIALOG_DATA, MatDialogRef} from "@angular/material";
   
   <h1 mat-dialog-title>{{data.title}}</h1>
 <div mat-dialog-content>
-  <p>{{data.message}}</p>
+  <p [innerHTML]="data.message"></p>
 <br/>
 </div>
 <div mat-dialog-actions>
@@ -41,4 +41,40 @@ export interface YesNoDialogData{
   title: string,
   yes: string,
   no: string
+}
+
+
+@Component({
+
+  selector: 'info-dialog',
+  template: `    
+  <h1 mat-dialog-title>{{data.title}}</h1>
+<div mat-dialog-content>
+  <p [innerHTML]="data.message"></p>
+<br/>
+</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="onYesClick()"  >{{data.yes}}</button>
+</div>
+  `,
+})
+export class InfoDialogComponent {
+
+  constructor(
+    public dialogRef: MatDialogRef<YesNoDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: YesNoDialogData) {
+
+
+  }
+
+  onYesClick(): void {
+    this.dialogRef.close({agree : true});
+  }
+
+}
+
+export interface InfoDialogData{
+  message : string,
+  title: string,
+  yes: string
 }
