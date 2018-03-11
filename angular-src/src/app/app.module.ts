@@ -27,7 +27,7 @@ import {DashboardModule} from "./components/dashboard/dashboard.module";
     NavbarComponent,
     LoginComponent,
     HomeComponent,
-    FooterComponent,
+    FooterComponent
 
   ],
   imports: [

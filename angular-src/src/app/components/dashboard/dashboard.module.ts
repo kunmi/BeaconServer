@@ -9,14 +9,14 @@ import {RegisterComponent} from "./admin/dash-users/register/register.component"
 import {InfoDialogComponent, YesNoDialogComponent} from "../util.component";
 import {DashProjectsComponent} from "./admin/dash-projects/dash-projects.component";
 import {DashProjectDialogComponents} from "./admin/dash-projects/dash-project-dialog.components";
-import {DashProjectHomeComponent} from "./admin/dash-projects/home/dash-project-home/dash-project-home.component";
+import {DashProjectHomeComponent} from "./admin/dash-project-detail/dash-project-home.component";
 import {DashboardRoutingModule} from "./dashboard-routing.module";
 import {CommonModule} from "@angular/common";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {HttpClientModule} from "@angular/common/http";
 import {SharedMaterialModule} from "../../material-module";
-
-
+import {ProjectImageDialogComponent} from "./admin/dash-project-detail/project-image-dialog.components";
+import {DashFloorplanComponent} from "./admin/dash-floorplan/dash-floorplan.component";
 
 @NgModule({
   declarations: [
@@ -31,9 +31,11 @@ import {SharedMaterialModule} from "../../material-module";
     InfoDialogComponent,
     DashProjectsComponent,
     DashProjectDialogComponents,
-    DashProjectHomeComponent
+    DashProjectHomeComponent,
+    ProjectImageDialogComponent,
+    DashFloorplanComponent
   ],
-  entryComponents:[YesNoDialogComponent, DashProjectDialogComponents, InfoDialogComponent],
+  entryComponents:[YesNoDialogComponent, DashProjectDialogComponents, InfoDialogComponent, ProjectImageDialogComponent],
   imports: [
     DashboardRoutingModule,
    CommonModule,

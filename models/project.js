@@ -2,7 +2,8 @@ const mongoose = require("mongoose");
 const dbconfig = require('../config/db');
 const User = require('./user');
 var hat = require('hat');
-
+const FloorPlan = require("./floorplan");
+const FloorPlanSchema = mongoose.model('FloorPlan').schema;
 
 //Project Schema
 const ProjectSchema =mongoose.Schema({
@@ -28,16 +29,13 @@ const ProjectSchema =mongoose.Schema({
                 unique: true
             },
             token: String }
-        ],
-    beacons: [{
-        type: Array,
-        default:[]
-    }]
-
-
+        ]
+    ,
+    floorPlans : [FloorPlanSchema]
 });
 
 const Project = module.exports = mongoose.model('Project', ProjectSchema );
+
 
 
 module.exports.getProjectByID = function (id, callback) {
@@ -61,7 +59,7 @@ module.exports.getAllProject = (callback)=>{
     Project.find({},callback);
 };
 
-/************ USER -> PRoject ***************************/
+/************ USER -> Project ***************************/
 module.exports.addUserToProject =  function(id, user, callback){
 
     Project.update({
@@ -103,4 +101,39 @@ module.exports.removeUserFromProject =  function(id, user, callback){
         callback(error, null);
     });
 
-}
+};
+
+
+/*  IMAGE IMPORT  */
+module.exports.addImageToProject = function (id, files, userId, callback) {
+
+    let floorplans = [];
+    for(let i=0; i<files.length; i++)
+    {
+        floorplans.push(FloorPlan.newFloorPlan(files[i], userId));
+    }
+
+    Project.update({
+        _id: id
+    }, {
+        $push: {
+            floorPlans : {
+                $each: floorplans
+            }
+        }
+    }).then((raw) => {
+        callback(null,raw.nModified);
+    }).catch(error=>{
+        callback(error, null);
+    });
+};
+
+/* Floor Plan Related */
+
+module.exports.getFloorPlanFromProject = function (floorPlanId, projectId, callback) {
+    Project.findById(projectId).then((project) => {
+        callback(null,project.floorPlans.id(floorPlanId));
+    }).catch(error =>{
+        callback(error, null);
+    });
+};

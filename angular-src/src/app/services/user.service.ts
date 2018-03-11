@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders} from '@angular/common/http'
 import 'rxjs/add/operator/map';
 import {User} from "../models/User";
 import {AuthService} from "./auth.service";
+import {Values} from "../models/Values";
 
 
 
@@ -12,14 +13,15 @@ export class UserProvider{
 
   constructor(
     private http:HttpClient,
-    private authService: AuthService) {}
+    private authService: AuthService,
+    private values: Values) {}
 
   getUsers(){
     let headers = new HttpHeaders();
     this.authService.loadToken();
     headers = headers.append('Authorization', this.authService.authToken);
     headers = headers.append('Content-Type', 'application/json');
-    return this.http.get<Array<User>>('http://localhost:3000/users', {headers: headers})
+    return this.http.get<Array<User>>(this.values.getServiceEndPoint()+'users', {headers: headers})
       .map(res => res);
   }
 
@@ -30,7 +32,7 @@ export class UserProvider{
     this.authService.loadToken();
     headers = headers.append('Authorization', this.authService.authToken);
     headers = headers.append('Content-Type', 'application/json');
-    return this.http.get<any>('http://localhost:3000/users/'+id, {headers: headers})
+    return this.http.get<any>(this.values.getServiceEndPoint()+'users/'+id, {headers: headers})
       .map(res => res);
   }
 
@@ -39,7 +41,7 @@ export class UserProvider{
     this.authService.loadToken();
     headers = headers.append('Authorization', this.authService.authToken);
     headers.append('Content-Type', 'application/json');
-    return this.http.post<RegisterResultData>('http://localhost:3000/users/register', user, {headers: headers})
+    return this.http.post<RegisterResultData>(this.values.getServiceEndPoint()+'users/register', user, {headers: headers})
       .map(res => res);
   }
 
@@ -48,7 +50,7 @@ export class UserProvider{
     this.authService.loadToken();
     headers = headers.append('Authorization', this.authService.authToken);
     headers.append('Content-Type', 'application/json');
-    return this.http.patch<RegisterResultData>('http://localhost:3000/users/'+user._id, user, {headers: headers})
+    return this.http.patch<RegisterResultData>(this.values.getServiceEndPoint()+'users/'+user._id, user, {headers: headers})
       .map(res => res);
   }
 
@@ -57,7 +59,7 @@ export class UserProvider{
     this.authService.loadToken();
     headers = headers.append('Authorization', this.authService.authToken);
     headers.append('Content-Type', 'application/json');
-    return this.http.delete<RegisterResultData>('http://localhost:3000/users/'+user._id,  {headers: headers})
+    return this.http.delete<RegisterResultData>(this.values.getServiceEndPoint()+'users/'+user._id,  {headers: headers})
       .map(res => res);
   }
 

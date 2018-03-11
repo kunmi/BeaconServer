@@ -8,7 +8,8 @@ import {DashOverviewComponent} from "./client/dash-overview/dash-overview.compon
 import {DashProjectsComponent} from "./admin/dash-projects/dash-projects.component";
 import {ProjectProvider} from "../../services/project.service";
 import {ProfileComponent} from "./client/profile/profile.component";
-import {DashProjectHomeComponent} from "./admin/dash-projects/home/dash-project-home/dash-project-home.component";
+import {DashProjectHomeComponent} from "./admin/dash-project-detail/dash-project-home.component";
+import {DashFloorplanComponent} from "./admin/dash-floorplan/dash-floorplan.component";
 
 const dashRoutes: Routes = [
 
@@ -19,6 +20,7 @@ const dashRoutes: Routes = [
       {path: 'projects', component: DashProjectsComponent},
       {path: 'projects/:id', component: DashProjectHomeComponent},
 
+      {path: 'projects/:projectid/floorplan/:floorplanid', component: DashFloorplanComponent},
 
 
       {path: 'x', component: DashUsersComponent}

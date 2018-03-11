@@ -1,0 +1,57 @@
+<main class="container">
+<div>
+  <h2>Available Projects</h2>
+  <div class="">
+    <mat-form-field>
+      <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
+    </mat-form-field>
+
+
+  </div>
+
+  <div class="container mat-elevation-z8">
+
+    <mat-table [dataSource]="dataSource" matSort>
+
+      <!-- Name Column -->
+      <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.name}} </mat-cell>
+      </ng-container>
+
+      <!-- Username Column -->
+      <ng-container matColumnDef="email">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Email </mat-header-cell>
+        <mat-cell *matCellDef="let row"> {{row.email}} </mat-cell>
+      </ng-container>
+
+      <!-- Color Column -->
+      <ng-container matColumnDef="description">
+        <mat-header-cell *matHeaderCellDef mat-sort-header> Description </mat-header-cell>
+        <mat-cell *matCellDef="let row" > <div style="padding-top: 7px; padding-bottom: 7px"> {{row.description | slice:0:120}} {{row.description.length > 120 ? '...' : ''}} </div></mat-cell>
+      </ng-container>
+
+
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{'highlight': selectedRowIndex == row.id}"
+               (click)="highlight(row)" (dblclick)="openEditProjectDialog(row)">
+      </mat-row>
+
+    </mat-table>
+
+
+
+    <div class="button-row" style="float: right" *ngIf="canManageProject">
+      <button mat-fab color="primary" (click)="openCreateProjectDialog()">+</button>
+    </div>
+
+
+    <mat-paginator #paginator
+                   [pageSize]="10"
+                   [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
+  </div>
+
+
+
+</div>
+</main>

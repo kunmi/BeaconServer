@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 const User = require("../routes/users");
 
 const FloorPlanSchema = module.exports = mongoose.Schema({
+    name : {
+        type : String,
+        default : "Unnamed"
+    },
     filename : {
         type: String,
         required : true
@@ -14,6 +18,7 @@ const FloorPlanSchema = module.exports = mongoose.Schema({
     },
     size : String,
     mimeType: String,
+    path: String
 
 });
 

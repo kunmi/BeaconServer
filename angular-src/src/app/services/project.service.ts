@@ -3,30 +3,34 @@ import { HttpClient, HttpHeaders} from '@angular/common/http'
 import 'rxjs/add/operator/map';
 import {AuthService} from "./auth.service";
 import {Project} from "../models/project";
+import {Values} from "../models/Values";
 
 @Injectable()
 export class ProjectProvider{
 
   constructor(
     private http:HttpClient,
-    private authService: AuthService) {}
+    private authService: AuthService,
+    private values : Values) {
+
+  }
 
   getProjects(){
     let headers = new HttpHeaders();
     this.authService.loadToken();
     headers = headers.append('Authorization', this.authService.authToken);
     headers = headers.append('Content-Type', 'application/json');
-    return this.http.get<Array<Project>>('http://localhost:3000/projects', {headers: headers})
+    return this.http.get<Array<Project>>(this.values.getServiceEndPoint()+'projects', {headers: headers})
       .map(res => res);
   }
 
 
-  getproject(id){
+  getProject(id){
     let headers = new HttpHeaders();
     this.authService.loadToken();
     headers = headers.append('Authorization', this.authService.authToken);
     headers = headers.append('Content-Type', 'application/json');
-    return this.http.get<any>('http://localhost:3000/projects/'+id, {headers: headers})
+    return this.http.get<any>(this.values.getServiceEndPoint()+'projects/'+id, {headers: headers})
       .map(res => res);
   }
 
@@ -35,7 +39,7 @@ export class ProjectProvider{
     this.authService.loadToken();
     headers = headers.append('Authorization', this.authService.authToken);
     headers.append('Content-Type', 'application/json');
-    return this.http.post<RegisterResultData>('http://localhost:3000/projects/register', project, {headers: headers})
+    return this.http.post<RegisterResultData>(this.values.getServiceEndPoint()+'projects/register', project, {headers: headers})
       .map(res => res);
   }
 
@@ -44,7 +48,7 @@ export class ProjectProvider{
     this.authService.loadToken();
     headers = headers.append('Authorization', this.authService.authToken);
     headers.append('Content-Type', 'application/json');
-    return this.http.patch<RegisterResultData>('http://localhost:3000/projects/'+project._id, project, {headers: headers})
+    return this.http.patch<RegisterResultData>(this.values.getServiceEndPoint()+'projects/'+project._id, project, {headers: headers})
       .map(res => res);
   }
 
@@ -53,7 +57,7 @@ export class ProjectProvider{
     this.authService.loadToken();
     headers = headers.append('Authorization', this.authService.authToken);
     headers.append('Content-Type', 'application/json');
-    return this.http.delete<RegisterResultData>('http://localhost:3000/projects/'+project._id,  {headers: headers})
+    return this.http.delete<RegisterResultData>(this.values.getServiceEndPoint()+'projects/'+project._id,  {headers: headers})
       .map(res => res);
   }
 
@@ -63,7 +67,7 @@ export class ProjectProvider{
     this.authService.loadToken();
     headers = headers.append('Authorization', this.authService.authToken);
     headers.append('Content-Type', 'application/json');
-    return this.http.post<AddUserToProjectResultData>('http://localhost:3000/projects/'+project._id+'/adduser', thisUser,{headers: headers})
+    return this.http.post<AddUserToProjectResultData>(this.values.getServiceEndPoint()+'projects/'+project._id+'/adduser', thisUser,{headers: headers})
       .map(res => res);
   }
 
@@ -72,10 +76,31 @@ export class ProjectProvider{
     this.authService.loadToken();
     headers = headers.append('Authorization', this.authService.authToken);
     headers.append('Content-Type', 'application/json');
-    return this.http.post<AddUserToProjectResultData>('http://localhost:3000/projects/'+project._id+'/removeuser', thisUser,{headers: headers})
+    return this.http.post<AddUserToProjectResultData>(this.values.getServiceEndPoint()+'projects/'+project._id+'/removeuser', thisUser,{headers: headers})
       .map(res => res);
   }
 
+
+  addImagesToProject(projectID, images)
+  {
+    let headers = new HttpHeaders();
+    this.authService.loadToken();
+    headers = headers.append('Authorization', this.authService.authToken);
+    headers.append('Content-Type', 'application/json');
+    return this.http.post<AddUserToProjectResultData>(this.values.getServiceEndPoint()+'projects/'+projectID+'/upload', images,{headers: headers})
+      .map(res => res);
+  }
+
+
+  getImagesForProject(projectId)
+  {
+    let headers = new HttpHeaders();
+    this.authService.loadToken();
+    headers = headers.append('Authorization', this.authService.authToken);
+    headers.append('Content-Type', 'application/json');
+    return this.http.get<any>(this.values.getServiceEndPoint()+'projects/'+projectId+'/images', {headers: headers})
+    .map(res => res);
+  }
 
 
 }

@@ -124,7 +124,7 @@ export class DashProjectDialogComponents implements OnInit{
 
     if (this.data)
     {
-      this.projectProvider.getproject(this.data.id).subscribe(data => {
+      this.projectProvider.getProject(this.data.id).subscribe(data => {
         if(!data.success)
         {
           this.dialogRef.close({success: false, message : data.message});
@@ -249,7 +249,7 @@ export class DashProjectDialogComponents implements OnInit{
 
   gotoProjectHome(){
     this.dialogRef.close({navigate: true, id: this.model._id});
-    //this.router.navigate(["./project", this.model._id],{relativeTo: this.r});
+    //this.router.navigate(["./project", this.model.id],{relativeTo: this.r});
 }
 
 

@@ -5,6 +5,8 @@ const title: string = "Beacon Framework";
 const year: string = "2017";
 const copyright: string = "Olakunmi Joseph";
 
+const BASE_URL =  "http://localhost:3000/";
+
 export class Values {
   getTitle(){
     return title;
@@ -17,4 +19,9 @@ export class Values {
   getCopyright(){
     return copyright;
   }
+
+  getServiceEndPoint(){
+    return BASE_URL;
+  }
+
 }

@@ -7,13 +7,14 @@ const mongoose = require("mongoose");
 
 const dbConfig = require('./config/db');
 
+
+
 //DB: CONNECTION
 mongoose.Promise = Promise;
 
 
 //Connect to DB
 mongoose.connect(dbConfig.database, {
-
     useMongoClient : true,
     promiseLibrary: global.Promise
 
@@ -30,12 +31,11 @@ mongoose.connection.on('error', (err) => {
 
 //END DB CONNECTION
 
-
 const app = express();
 
 const users = require('./routes/users');
 const projects = require('./routes/projects');
-
+const floorPlan = require('./routes/floorplan');
 
 
 // PORT NUMER
@@ -46,7 +46,9 @@ const port = 3000;
 app.use(cors());
 
 // STATIC - CLIENT CODE
+app.use(express.static(path.join(__dirname, 'uploads')));
 app.use(express.static(path.join(__dirname, 'public')));
+
 
 
 
@@ -65,6 +67,7 @@ require('./config/passport')(passport);
 //ROUTE LINK
 app.use('/users',users);
 app.use('/projects', projects);
+app.use('/floorplan', floorPlan);
 
 //INDEX ROUT
 app.get('/', (req,res) => {

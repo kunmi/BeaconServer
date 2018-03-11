@@ -4,9 +4,16 @@ const passport = require('passport');
 const jwt = require('jsonwebtoken');
 
 const Project = require('../models/project');
-const User = require('../models/user')
+const User = require('../models/user');
 const dbConfig = require('../config/db');
 var ObjectId = require('mongodb').ObjectID;
+const Image = require('../models/image');
+
+
+const multer = require("multer");
+const MAX_FILE_SIZE = 20000000;
+
+//Upload
 
 
 //Register
@@ -42,7 +49,7 @@ router.post('/register', passport.authenticate('jwt', {session:false}), (req, re
     }
 });
 
-
+// List Projects
 router.get('/', passport.authenticate('jwt', {session:false}), (req, res, next) => {
 
     let presentUser = req.user;
@@ -83,11 +90,13 @@ router.get('/', passport.authenticate('jwt', {session:false}), (req, res, next) 
 
 });
 
+// Get Specific Project
 router.get('/:id', passport.authenticate('jwt', {session:false}), (req, res, next) => {
     let presentUser = req.user;
     if(presentUser.isadmin) {
 
         Project.getProjectByID(ObjectId(req.params.id), (err, project)=>{
+
 
             if(err)
             {
@@ -96,6 +105,16 @@ router.get('/:id', passport.authenticate('jwt', {session:false}), (req, res, nex
             }
             else
             {
+                let images = [];
+
+                for(let i = 0; i < project.floorPlans.length; i++)
+                {
+                    let floorPlan = project.floorPlans[i];
+                    images.push(new Image(floorPlan));
+                }
+                project = JSON.parse(JSON.stringify(project));
+                project.floorPlans = images;
+
                 res.send({success: true, project: project});
             }
 
@@ -111,6 +130,7 @@ router.get('/:id', passport.authenticate('jwt', {session:false}), (req, res, nex
 
 });
 
+// Edit Project
 router.patch('/:id', passport.authenticate('jwt', {session:false}), (req, res, next) => {
 
     let presentUser = req.user;
@@ -149,7 +169,7 @@ router.patch('/:id', passport.authenticate('jwt', {session:false}), (req, res, n
 
 });
 
-
+// Delete Project
 router.delete('/:id', passport.authenticate('jwt', {session:false}), (req, res, next) => {
 
     let presentUser = req.user;
@@ -182,8 +202,6 @@ router.delete('/:id', passport.authenticate('jwt', {session:false}), (req, res, 
     }
 
 });
-
-
 
 //Add User to Project
 router.post('/:id/adduser', passport.authenticate('jwt', {session:false}), (req, res, next) => {
@@ -335,5 +353,154 @@ router.post('/:id/removeuser', passport.authenticate('jwt', {session:false}), (r
 
 
 
+//IMAGE _ PART
+
+//Add Image to Project
+router.post('/:id/upload', passport.authenticate('jwt', {session:false}), (req, res, next) => {
+
+    let presentUser = req.user;
+
+    if(presentUser)
+    {
+        if(presentUser.roles.manage_projects)
+        {
+            let projectId =  req.params.id;
+            Project.getProjectByID(ObjectId(projectId), (err, project)=>{
+
+                if(err)
+                {
+                    res.send({success: false, msg : err.message});
+                    console.error(err);
+                }
+
+                else
+                {
+
+
+                    const multerConf = {
+
+                        storage : multer.diskStorage({
+                            destination: function (req, file, cb) {
+                                cb(null, 'uploads/floorplans/')
+                            },
+                            filename: function (req, file, cb) {
+                                let ext = file.originalname.substring(file.originalname.lastIndexOf('.'), file.originalname.length);
+                                cb(null, "plan"+ '-' + projectId + '-' + Date.now()+ext);
+                            }
+                        }),
+                        limit : {
+                            fileSize : MAX_FILE_SIZE
+                        },
+                        fileFilter: function (req, file, next) {
+                            if(!file)
+                            {
+                                next();
+                            }
+
+                            const image = file.mimetype.startsWith('image/');
+
+                            if(image)
+                            {
+                                next(null, true);
+                            }
+                            else
+                            {
+                                next({message: "File type not supported"}, false);
+                            }
+                        }
+
+                    };
+
+                    var upload = multer(multerConf).array("imageInput",12);
+
+                    upload(req, res, function (err){
+
+                        if(err)
+                        {
+                            console.log("Error occurred "+ err.message)
+                            res.send({success: false, msg: err.message});
+                        }
+                        else
+                        {
+                            Project.addImageToProject(ObjectId(projectId), req.files,ObjectId(presentUser._id), (err, nmods)=>{
+
+                                if(err)
+                                {
+                                    res.send({success: false, msg : err.message});
+                                }
+                                else
+                                {
+                                    if(nmods>0)
+                                    {
+                                        res.send({success: true});
+
+                                    }
+                                    else
+                                    {
+                                        res.send({success: false, msg : "Did not upload for some odd reasons"});
+                                    }
+                                }
+                            });
+                        }
+
+                    });
+                }
+
+
+            });
+
+
+        }
+        else
+        {
+            res.send({success: false, msg: "Not Permitted"});
+        }
+
+    }
+    else
+    {
+        res.sendStatus(401);
+    }
+
+
+
+});
+
+//Get Images
+router.get('/:id/images', passport.authenticate('jwt', {session:false}), (req, res, next) => {
+    let presentUser = req.user;
+
+    if(presentUser.isadmin) {
+
+        Project.getProjectByID(ObjectId(req.params.id), (err, project)=>{
+
+            if(err)
+            {
+                console.error(err);
+                res.send({success: false, msg: err.message});
+            }
+            else
+            {
+                 let images = [];
+                 for(let i = 0; i < project.floorPlans.length; i++)
+                 {
+                     let floorPlan = project.floorPlans[i];
+                     images.push( new Image(floorPlan));
+                 }
+
+                res.send({success: true, images: images});
+            }
+
+        });
+
+
+
+    }
+    else
+    {
+        res.send({success: false, msg: 'Not Authorized'});
+    }
+
+});
 
 module.exports = router;
