@@ -1,3 +1,23 @@
-<p>
-  dash-floorplan works!
-</p>
+<main class="container">
+
+  <mat-card style="min-height: 700px">
+    <h1 style="align-content: center; " class="text-center"> {{floorplan.name}} </h1>
+    <br/>
+    <div>
+      <img-map
+        src="{{this.values.getServiceEndPoint()+floorplan.url}}"
+        [markers]="pins"
+        (viewDidAppear)="floorplanAppeared($event)"
+        (change)="onSelected($event)"
+      ></img-map>
+
+    </div>
+
+    <div>
+
+    </div>
+
+  </mat-card>
+
+
+</main>

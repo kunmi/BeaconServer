@@ -132,7 +132,7 @@ module.exports.addImageToProject = function (id, files, userId, callback) {
 
 module.exports.getFloorPlanFromProject = function (floorPlanId, projectId, callback) {
     Project.findById(projectId).then((project) => {
-        callback(null,project.floorPlans.id(floorPlanId));
+        callback(null,project,project.floorPlans.id(floorPlanId));
     }).catch(error =>{
         callback(error, null);
     });

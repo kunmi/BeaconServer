@@ -17,6 +17,11 @@ import {HttpClientModule} from "@angular/common/http";
 import {SharedMaterialModule} from "../../material-module";
 import {ProjectImageDialogComponent} from "./admin/dash-project-detail/project-image-dialog.components";
 import {DashFloorplanComponent} from "./admin/dash-floorplan/dash-floorplan.component";
+import {ProjectProvider} from "../../services/project.service";
+import {UserProvider} from "../../services/user.service";
+import {FloorplanProvider} from "../../services/floorplan.service";
+import {ImgMapComponent} from "../plugin/ng2-img-map";
+
 
 @NgModule({
   declarations: [
@@ -33,7 +38,8 @@ import {DashFloorplanComponent} from "./admin/dash-floorplan/dash-floorplan.comp
     DashProjectDialogComponents,
     DashProjectHomeComponent,
     ProjectImageDialogComponent,
-    DashFloorplanComponent
+    DashFloorplanComponent,
+    ImgMapComponent
   ],
   entryComponents:[YesNoDialogComponent, DashProjectDialogComponents, InfoDialogComponent, ProjectImageDialogComponent],
   imports: [
@@ -43,7 +49,8 @@ import {DashFloorplanComponent} from "./admin/dash-floorplan/dash-floorplan.comp
     ReactiveFormsModule,
     HttpClientModule,
     SharedMaterialModule
-  ]
+  ],
+  providers: [UserProvider, ProjectProvider, FloorplanProvider]
 })
 
 

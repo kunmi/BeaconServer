@@ -4,7 +4,7 @@ import {AuthService} from "./auth.service";
 import {Values} from "../models/Values";
 
 @Injectable()
-export class FloorplanService {
+export class FloorplanProvider {
 
   constructor(
     private http: HttpClient,
@@ -19,14 +19,19 @@ export class FloorplanService {
     this.authService.loadToken();
     headers = headers.append('Authorization', this.authService.authToken);
     headers.append('Content-Type', 'application/json');
-    return this.http.get<any>(this.values.getServiceEndPoint()+'floorplan/'+floorplanId+'/upload',
+    return this.http.get<any>(this.values.getServiceEndPoint()+'floorplan/'+floorplanId+'/project/'+projectId,
       {
         headers: headers,
+      /*
         params : {
           id: floorplanId,
           projectId: projectId
-        }})
-      .map(res => res);
+        }
+      */
+
+      })
+      .map(
+        res => res);
 
   }
 

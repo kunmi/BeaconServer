@@ -11,13 +11,13 @@ var ObjectId = require('mongodb').ObjectID;
 const Image = require('../models/image');
 
 
-router.get('/:id/:projectId', passport.authenticate('jwt', {session:false}), (req, res, next) => {
+router.get('/:id/project/:projectId', passport.authenticate('jwt', {session:false}), (req, res, next) => {
 
 
     let presentUser = req.user;
     if(presentUser)
     {
-        Project.getFloorPlanFromProject(ObjectId(req.params.id),ObjectId(req.params.projectId), (err, floorplan)=>{
+        Project.getFloorPlanFromProject(ObjectId(req.params.id),ObjectId(req.params.projectId), (err, project, floorplan)=>{
 
             if(err)
             {
@@ -27,16 +27,19 @@ router.get('/:id/:projectId', passport.authenticate('jwt', {session:false}), (re
             else
             {
 
-                for(let i = 0; i < project.floorPlans.length; i++)
-                {
-                    let floorPlan = project.floorPlans[i];
-                    images.push(new Image(floorPlan));
-                }
                 let image = new Image(floorplan);
 
                 floorplan = JSON.parse(JSON.stringify(floorplan));
-                floorplan.image = image;
-                res.send({success: true, floorPlan: floorplan});
+
+
+                result = {};
+                floorplan.url = image.url;
+
+                result.floorplan = floorplan;
+                result.project = JSON.parse(JSON.stringify(project));
+
+
+                    res.send({success: true, data: result});
             }
 
         });

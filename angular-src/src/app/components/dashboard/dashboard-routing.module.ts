@@ -10,6 +10,7 @@ import {ProjectProvider} from "../../services/project.service";
 import {ProfileComponent} from "./client/profile/profile.component";
 import {DashProjectHomeComponent} from "./admin/dash-project-detail/dash-project-home.component";
 import {DashFloorplanComponent} from "./admin/dash-floorplan/dash-floorplan.component";
+import {FloorplanProvider} from "../../services/floorplan.service";
 
 const dashRoutes: Routes = [
 
@@ -34,7 +35,6 @@ const dashRoutes: Routes = [
   ],
   exports: [
     RouterModule
-  ],
-  providers: [UserProvider, ProjectProvider]
+  ]
 })
 export class DashboardRoutingModule { }
