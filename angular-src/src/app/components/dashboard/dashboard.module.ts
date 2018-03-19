@@ -21,6 +21,7 @@ import {ProjectProvider} from "../../services/project.service";
 import {UserProvider} from "../../services/user.service";
 import {FloorplanProvider} from "../../services/floorplan.service";
 import {ImgMapComponent} from "../plugin/ng2-img-map";
+import {FileSizePipe} from "../plugin/file-size.pipe";
 
 
 @NgModule({
@@ -39,7 +40,8 @@ import {ImgMapComponent} from "../plugin/ng2-img-map";
     DashProjectHomeComponent,
     ProjectImageDialogComponent,
     DashFloorplanComponent,
-    ImgMapComponent
+    ImgMapComponent,
+    FileSizePipe
   ],
   entryComponents:[YesNoDialogComponent, DashProjectDialogComponents, InfoDialogComponent, ProjectImageDialogComponent],
   imports: [

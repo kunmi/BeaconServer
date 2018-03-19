@@ -25,6 +25,8 @@ import {
         (click)="onClick($event)"
         (mousemove)="onMousemove($event)"
         (mouseout)="onMouseout($event)"
+        (mousedown)="onMouseDown($event)"
+        (mouseup)="onMouseUp($event)" 
       ></canvas>
     </div>
   `
@@ -97,6 +99,24 @@ export class ImgMapComponent {
   private markerHover: number = null;
 
 
+  //Todo
+  //Move image smoothing and dragging to @input
+
+  /**
+   *  Quality of drawn image - low|medium|high. Dependent on if ImageSmoothing is enabled
+   * @type {string}
+   */
+  imageSmoothingQuality = "medium";
+
+  imageSmoothingEnabled = false;
+
+
+  draggable = false;
+
+  draggedIndex: number;
+  draggedPosition = null;
+
+
 
   /**
    * Index of the active state marker.
@@ -132,7 +152,17 @@ export class ImgMapComponent {
     const context = this.canvas.nativeElement.getContext('2d');
     context.beginPath();
     let pixel:number[] =  marker.getCoordsAsPixel(this.image);
-    context.arc(pixel[0], pixel[1], marker.size, 0, 2 * Math.PI);
+
+    switch (marker.base)
+    {
+      case ShapeType.Circle:
+        context.arc(pixel[0], pixel[1], marker.size, 0, 2 * Math.PI);
+        break;
+
+      case ShapeType.Square:
+        context.rect(pixel[0], pixel[1], marker.size, marker.size);
+        break;
+    }
     switch (type) {
       case 'active':
         context.fillStyle = 'rgba(255, 0, 0, 0.6)';
@@ -144,18 +174,103 @@ export class ImgMapComponent {
         context.fillStyle = 'rgba(0, 0, 255, 0.4)';
     }
     context.fill();
+
+    if(marker.type == MarkerType.Composite){
+      context.beginPath();
+
+      if(marker.type != null)
+      {
+        switch (marker.base)
+        {
+          case ShapeType.Square:
+
+            pixel[0] = (pixel[0] + marker.size/2) - marker.imageWidth/2;
+            pixel[1] = (pixel[1] + marker.size/2) - marker.imageHeight/2;
+            break;
+
+          case ShapeType.Circle:
+            pixel[0] = (pixel[0] - marker.imageWidth/2);
+            pixel[1] = (pixel[1] - marker.imageHeight/2);
+            break;
+        }
+
+
+      }
+      if(this.imageSmoothingEnabled)
+      {
+        context.mozImageSmoothingEnabled = true;
+        context.imageSmoothingQuality = this.imageSmoothingQuality;
+        context.webkitImageSmoothingEnabled = true;
+        context.msImageSmoothingEnabled = true;
+        context.imageSmoothingEnabled = true;
+      }
+
+      context.drawImage(marker.image, pixel[0], pixel[1], marker.imageWidth, marker.imageHeight);
+    }
+
   }
 
   /**
    * Check if a position is inside a marker.
    */
   private insideMarker(marker: Marker, coordinate: number[]): boolean {
+
     let pixel = marker.getCoordsAsPixel(this.image);
-    return Math.sqrt(
-      (coordinate[0] - pixel[0]) * (coordinate[0] - pixel[0])
-      + (coordinate[1] - pixel[1]) * (coordinate[1] - pixel[1])
-    ) < marker.size;
+
+    if(marker.type == MarkerType.Shape)
+    {
+     if (marker.base == ShapeType.Circle) {
+
+       return Math.sqrt(
+         (coordinate[0] - pixel[0]) * (coordinate[0] - pixel[0])
+         + (coordinate[1] - pixel[1]) * (coordinate[1] - pixel[1])
+       ) < marker.size;
+     }
+     else
+     {
+       return (coordinate[0]>=pixel[0] && coordinate[0]<=((pixel[0])+marker.size))
+                &&
+         (coordinate[1]>=pixel[1] && coordinate[1]<=((pixel[1])+marker.size));
+     }
+    }
+
+    else if(marker.type == MarkerType.Composite) {
+      let inside = false;
+
+      if(marker.base == ShapeType.Circle)
+      {
+        inside = Math.sqrt(
+          (coordinate[0] - pixel[0]) * (coordinate[0] - pixel[0])
+          + (coordinate[1] - pixel[1]) * (coordinate[1] - pixel[1])
+        ) < marker.size;
+
+        if(inside)
+          return inside;
+      }
+
+      if(marker.base == ShapeType.Square)
+      {
+        inside = (coordinate[0]>=pixel[0] && coordinate[0]<=((pixel[0])+marker.size))
+          &&
+          (coordinate[1]>=pixel[1] && coordinate[1]<=((pixel[1])+marker.size));
+
+        if(inside)
+          return inside;
+      }
+
+      if(!inside)
+      {
+        inside = (coordinate[0]>=pixel[0] && coordinate[0]<=((pixel[0])+marker.imageWidth))
+          &&
+          (coordinate[1]>=pixel[1] && coordinate[1]<=((pixel[1])+marker.imageHeight));
+      }
+
+      return inside;
+
+    }
+
   }
+
 
 
   createMarker(coords: number[], shape?:ShapeType): Marker{
@@ -209,14 +324,30 @@ export class ImgMapComponent {
     context.clearRect(0, 0, width, height);
 
     this.markers.forEach((marker, index) => {
-      if (this.markerActive === index) {
-        this.drawMarker(marker, 'active');
-      } else if (this.markerHover === index) {
-        this.drawMarker(marker, 'hover');
-      } else {
-        this.drawMarker(marker);
+
+      if(!(this.draggedIndex!=null && this.draggedIndex!=index)) {
+        if (this.markerActive === index) {
+          this.drawMarker(marker, 'active');
+        } else if (this.markerHover === index) {
+          this.drawMarker(marker, 'hover');
+        } else {
+          this.drawMarker(marker);
+        }
       }
     });
+
+    if(this.draggable)
+    {
+      if(this.draggedIndex!=null)
+      {
+        let marker: Marker = this.markers[this.draggedIndex];
+        let dimen = this.pixelToMarker(this.draggedPosition);
+        marker.x = dimen[0];
+        marker.y = dimen[1];
+        this.drawMarker(marker);
+      }
+    }
+
   }
 
   private onClick(event: MouseEvent): void {
@@ -268,6 +399,12 @@ export class ImgMapComponent {
         draw = true;
       }
       if (draw) this.draw();
+
+      if(this.draggedIndex != null) {
+        this.draggedPosition = cursor;
+        this.draw();
+
+      }
     }
   }
 
@@ -283,6 +420,45 @@ export class ImgMapComponent {
   }
 
 
+  onMouseDown(event: MouseEvent) : void {
+    const cursor = this.cursor(event);
+
+    if(this.draggable)
+    {
+        this.markers.forEach((marker, index) => {
+          if (this.insideMarker(marker, cursor)) {
+            if (this.draggedIndex == null) {
+              this.draggedIndex = index;
+            }
+          }
+        });
+
+    }
+  }
+
+  onMouseUp(event: MouseEvent): void {
+    if(this.draggable)
+    {
+
+      if(this.draggedIndex != null)
+      {
+        const cursor = this.cursor(event);
+
+        let marker:Marker = this.markers[this.draggedIndex];
+        let dimen = this.pixelToMarker(cursor);
+        marker.x =dimen[0];
+        marker.y = dimen[1];
+        this.markers[this.draggedIndex] = marker;
+        this.draggedIndex = null;
+
+        this.draw();
+
+    }
+    }
+  }
+
+
+
 }
 
 export enum MarkerType {Shape, Composite}
@@ -295,7 +471,11 @@ export class Marker
   type: MarkerType = MarkerType.Shape;
   base: ShapeType = ShapeType.Circle;
   size = 10;
+
   image = "";
+  imageWidth: number = 0;
+  imageHeight: number = 0;
+
   data: any = {};
 
   constructor(x, y, shape?:ShapeType)
@@ -312,11 +492,7 @@ export class Marker
     this.size = size;
   }
 
-  setAsComposite(image: string, base : ShapeType){
-    this.image = image;
-    this.type = MarkerType.Composite;
-    this.base = base;
-  }
+
 
     /**
      * Convert a percentage position to a pixel position.
@@ -333,6 +509,16 @@ export class Marker
       this.data = data;
       return this;
     }
+
+
+  setAsComposite(image: string, base : ShapeType, width: number, height: number){
+    this.image = image;
+    this.type = MarkerType.Composite;
+    this.base = base;
+
+    this.imageWidth = width;
+    this.imageHeight = height;
+  }
 
 
 

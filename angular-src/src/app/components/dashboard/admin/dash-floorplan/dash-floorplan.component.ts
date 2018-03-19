@@ -1,13 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {FloorplanProvider} from "../../../../services/floorplan.service";
 import {AuthService} from "../../../../services/auth.service";
 import {ProjectProvider} from "../../../../services/project.service";
 import {UserProvider} from "../../../../services/user.service";
 import {FlashMessagesService} from "angular2-flash-messages";
-import {MatSnackBar} from "@angular/material";
+import {MatDialog, MatSnackBar} from "@angular/material";
 import {Values} from "../../../../models/Values";
-import {Marker, ImgMapComponent} from "../../../plugin/ng2-img-map";
+import {Marker, ImgMapComponent, ShapeType} from "../../../plugin/ng2-img-map";
+import {YesNoDialogComponent, YesNoDialogData} from "../../../util.component";
 
 
 @Component({
@@ -17,13 +18,30 @@ import {Marker, ImgMapComponent} from "../../../plugin/ng2-img-map";
 })
 export class DashFloorplanComponent implements OnInit {
 
+  can_delete = false;
   presentProject : any;
   floorplan : any = { name : "default"};
 
   pins : Marker[] = [];
 
+  //@ViewChild('imgMap')
+  //imgMap: ImgMapComponent;
+
+  @ViewChild('icon')
+  icon: ElementRef;
+
+  smoothIcon;
+
+
 
   floorplanContext: ImgMapComponent;
+  deleteDialogData: YesNoDialogData = {
+    data: {},
+    message: "Are you sure you wan to remove this floorplan? if you do, you will lose all beacon assignments!!",
+    title: "Remove floor plan from Project",
+    yes: "Yes",
+    no: "No"
+  };
 
   constructor(
     private router: Router,
@@ -34,7 +52,8 @@ export class DashFloorplanComponent implements OnInit {
     private floorService: FloorplanProvider,
     private values: Values,
     private flashMessagesService: FlashMessagesService,
-    public snackBarRef: MatSnackBar) { }
+    public snackBarRef: MatSnackBar,
+    public dialog: MatDialog) { }
 
   ngOnInit() {
 
@@ -43,6 +62,11 @@ export class DashFloorplanComponent implements OnInit {
     {
         if(result.user)
         {
+          this.can_delete =
+            result.user.roles.manage_users&&
+            result.user.roles.manage_roles&&
+            result.user.roles.manage_projects&&
+            result.user.isadmin;
 
           if (!result.user.isadmin) {
             this.router.navigate(["../"], {relativeTo: this.activeRouter.parent});
@@ -74,26 +98,66 @@ export class DashFloorplanComponent implements OnInit {
   });
   }
 
-
   floorplanAppeared(context : ImgMapComponent)
   {
-    this.floorplanContext = context;
 
-    this.pins.push(context.createMarker([0, 0]);
-    this.pins.push (context.createMarker([50, 50]);
-    this.pins.push(context.createMarker([75, 75]).setData("baby"));
+
+    this.floorplanContext = context;
+    context.imageSmoothingQuality = "high";
+    context.imageSmoothingEnabled = true;
+    context.draggable = true;
+
+    let m = context.createMarker([51, 52]);
+    m.size = 49;
+
+
+
+    m.setAsComposite(this.icon.nativeElement, ShapeType.Circle, 40, 40);
+
+    //this.pins.push(context.createMarker([0, 0]);
+    this.pins.push (m);
+    //this.pins.push(context.createMarker([75, 75]).setData("baby"));
 
     context.draw();
 
   }
-
 
   onSelected(marker : Marker)
   {
     console.log(marker);
   }
 
+  deleteFloorPlan(){
+
+    let dialogRef = this.dialog.open(YesNoDialogComponent, {
+      width: '450px',
+      data: this.deleteDialogData
+    });
 
 
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (result.agree) {
 
+          this.floorService.deleteFloorplanWithId(this.floorplan._id, this.presentProject._id).subscribe(data => {
+
+            if (data) {
+              if (data.success) {
+                this.router.navigate(["projects", this.presentProject._id], {relativeTo: this.activeRouter.parent});
+              }
+              else {
+                this.flashMessagesService.show(data.msg,
+                  {cssClass: 'alert-danger', timeout: 3000});
+              }
+            }
+
+          });
+
+
+        }
+      }
+    };
+
+  };
 }
+

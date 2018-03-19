@@ -28,6 +28,7 @@ var project_service_1 = require("../../services/project.service");
 var user_service_1 = require("../../services/user.service");
 var floorplan_service_1 = require("../../services/floorplan.service");
 var ng2_img_map_1 = require("../plugin/ng2-img-map");
+var file_size_pipe_1 = require("../plugin/file-size.pipe");
 var DashboardModule = (function () {
     function DashboardModule() {
     }
@@ -48,7 +49,8 @@ var DashboardModule = (function () {
                 dash_project_home_component_1.DashProjectHomeComponent,
                 project_image_dialog_components_1.ProjectImageDialogComponent,
                 dash_floorplan_component_1.DashFloorplanComponent,
-                ng2_img_map_1.ImgMapComponent
+                ng2_img_map_1.ImgMapComponent,
+                file_size_pipe_1.FileSizePipe
             ],
             entryComponents: [util_component_1.YesNoDialogComponent, dash_project_dialog_components_1.DashProjectDialogComponents, util_component_1.InfoDialogComponent, project_image_dialog_components_1.ProjectImageDialogComponent],
             imports: [

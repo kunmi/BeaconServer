@@ -52,7 +52,6 @@ module.exports.updateProject = function (id,query, callback){
 
 module.exports.deleteProject = function (id, callback) {
     Project.findByIdAndRemove(id, {}, callback);
-
 }
 
 module.exports.getAllProject = (callback)=>{
@@ -136,4 +135,18 @@ module.exports.getFloorPlanFromProject = function (floorPlanId, projectId, callb
     }).catch(error =>{
         callback(error, null);
     });
+};
+
+
+module.exports.deleteFloorplanWithId = function (id, projectId,callback) {
+    Project.update(
+        { "_id": projectId },
+        { "$pull": { "floorPlans": { "_id": id } } })
+        .then((raw) =>
+            {
+                callback(null,raw.nModified);
+            })
+        .catch(error=>{
+            callback(error, null);
+        });
 };

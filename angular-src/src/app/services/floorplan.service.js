@@ -18,10 +18,7 @@ var FloorplanProvider = (function () {
         this.authService.loadToken();
         headers = headers.append('Authorization', this.authService.authToken);
         headers.append('Content-Type', 'application/json');
-        return this.http.get(this.values.getServiceEndPoint() + 'floorplan/' + floorplanId + '/project/' + projectId, {
-            headers: headers,
-        })
-            .map(function (res) { return res; });
+        return this.http.get(this.values.getServiceEndPoint() + 'floorplan/' + floorplanId + '/project/' + projectId, { headers: headers }).map(function (res) { return res; });
     };
     FloorplanProvider = __decorate([
         core_1.Injectable()

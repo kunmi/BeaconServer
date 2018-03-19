@@ -32,6 +32,16 @@ var ImgMapComponent = (function () {
          * Index of the hover state marker.
          */
         this.markerHover = null;
+        //Todo
+        //Move image smoothing and dragging to @input
+        /**
+         *  Quality of drawn image - low|medium|high. Dependent on if ImageSmoothing is enabled
+         * @type {string}
+         */
+        this.imageSmoothingQuality = "medium";
+        this.imageSmoothingEnabled = false;
+        this.draggable = false;
+        this.draggedPosition = null;
     }
     Object.defineProperty(ImgMapComponent.prototype, "setMarkers", {
         set: function (markers) {
@@ -69,7 +79,14 @@ var ImgMapComponent = (function () {
         var context = this.canvas.nativeElement.getContext('2d');
         context.beginPath();
         var pixel = marker.getCoordsAsPixel(this.image);
-        context.arc(pixel[0], pixel[1], marker.size, 0, 2 * Math.PI);
+        switch (marker.base) {
+            case ShapeType.Circle:
+                context.arc(pixel[0], pixel[1], marker.size, 0, 2 * Math.PI);
+                break;
+            case ShapeType.Square:
+                context.rect(pixel[0], pixel[1], marker.size, marker.size);
+                break;
+        }
         switch (type) {
             case 'active':
                 context.fillStyle = 'rgba(255, 0, 0, 0.6)';
@@ -81,14 +98,68 @@ var ImgMapComponent = (function () {
                 context.fillStyle = 'rgba(0, 0, 255, 0.4)';
         }
         context.fill();
+        if (marker.type == MarkerType.Composite) {
+            context.beginPath();
+            if (marker.type != null) {
+                switch (marker.base) {
+                    case ShapeType.Square:
+                        pixel[0] = (pixel[0] + marker.size / 2) - marker.imageWidth / 2;
+                        pixel[1] = (pixel[1] + marker.size / 2) - marker.imageHeight / 2;
+                        break;
+                    case ShapeType.Circle:
+                        pixel[0] = (pixel[0] - marker.imageWidth / 2);
+                        pixel[1] = (pixel[1] - marker.imageHeight / 2);
+                        break;
+                }
+            }
+            if (this.imageSmoothingEnabled) {
+                context.mozImageSmoothingEnabled = true;
+                context.imageSmoothingQuality = this.imageSmoothingQuality;
+                context.webkitImageSmoothingEnabled = true;
+                context.msImageSmoothingEnabled = true;
+                context.imageSmoothingEnabled = true;
+            }
+            context.drawImage(marker.image, pixel[0], pixel[1], marker.imageWidth, marker.imageHeight);
+        }
     };
     /**
      * Check if a position is inside a marker.
      */
     ImgMapComponent.prototype.insideMarker = function (marker, coordinate) {
         var pixel = marker.getCoordsAsPixel(this.image);
-        return Math.sqrt((coordinate[0] - pixel[0]) * (coordinate[0] - pixel[0])
-            + (coordinate[1] - pixel[1]) * (coordinate[1] - pixel[1])) < marker.size;
+        if (marker.type == MarkerType.Shape) {
+            if (marker.base == ShapeType.Circle) {
+                return Math.sqrt((coordinate[0] - pixel[0]) * (coordinate[0] - pixel[0])
+                    + (coordinate[1] - pixel[1]) * (coordinate[1] - pixel[1])) < marker.size;
+            }
+            else {
+                return (coordinate[0] >= pixel[0] && coordinate[0] <= ((pixel[0]) + marker.size))
+                    &&
+                        (coordinate[1] >= pixel[1] && coordinate[1] <= ((pixel[1]) + marker.size));
+            }
+        }
+        else if (marker.type == MarkerType.Composite) {
+            var inside = false;
+            if (marker.base == ShapeType.Circle) {
+                inside = Math.sqrt((coordinate[0] - pixel[0]) * (coordinate[0] - pixel[0])
+                    + (coordinate[1] - pixel[1]) * (coordinate[1] - pixel[1])) < marker.size;
+                if (inside)
+                    return inside;
+            }
+            if (marker.base == ShapeType.Square) {
+                inside = (coordinate[0] >= pixel[0] && coordinate[0] <= ((pixel[0]) + marker.size))
+                    &&
+                        (coordinate[1] >= pixel[1] && coordinate[1] <= ((pixel[1]) + marker.size));
+                if (inside)
+                    return inside;
+            }
+            if (!inside) {
+                inside = (coordinate[0] >= pixel[0] && coordinate[0] <= ((pixel[0]) + marker.imageWidth))
+                    &&
+                        (coordinate[1] >= pixel[1] && coordinate[1] <= ((pixel[1]) + marker.imageHeight));
+            }
+            return inside;
+        }
     };
     ImgMapComponent.prototype.createMarker = function (coords, shape) {
         var dimension = this.pixelToMarker(coords);
@@ -134,16 +205,27 @@ var ImgMapComponent = (function () {
         var context = canvas.getContext('2d');
         context.clearRect(0, 0, width, height);
         this.markers.forEach(function (marker, index) {
-            if (_this.markerActive === index) {
-                _this.drawMarker(marker, 'active');
-            }
-            else if (_this.markerHover === index) {
-                _this.drawMarker(marker, 'hover');
-            }
-            else {
-                _this.drawMarker(marker);
+            if (!(_this.draggedIndex != null && _this.draggedIndex != index)) {
+                if (_this.markerActive === index) {
+                    _this.drawMarker(marker, 'active');
+                }
+                else if (_this.markerHover === index) {
+                    _this.drawMarker(marker, 'hover');
+                }
+                else {
+                    _this.drawMarker(marker);
+                }
             }
         });
+        if (this.draggable) {
+            if (this.draggedIndex != null) {
+                var marker = this.markers[this.draggedIndex];
+                var dimen = this.pixelToMarker(this.draggedPosition);
+                marker.x = dimen[0];
+                marker.y = dimen[1];
+                this.drawMarker(marker);
+            }
+        }
     };
     ImgMapComponent.prototype.onClick = function (event) {
         var _this = this;
@@ -196,6 +278,10 @@ var ImgMapComponent = (function () {
             }
             if (draw)
                 this.draw();
+            if (this.draggedIndex != null) {
+                this.draggedPosition = cursor_1;
+                this.draw();
+            }
         }
     };
     ImgMapComponent.prototype.onMouseout = function (event) {
@@ -206,6 +292,33 @@ var ImgMapComponent = (function () {
     };
     ImgMapComponent.prototype.onResize = function (event) {
         this.draw();
+    };
+    ImgMapComponent.prototype.onMouseDown = function (event) {
+        var _this = this;
+        var cursor = this.cursor(event);
+        if (this.draggable) {
+            this.markers.forEach(function (marker, index) {
+                if (_this.insideMarker(marker, cursor)) {
+                    if (_this.draggedIndex == null) {
+                        _this.draggedIndex = index;
+                    }
+                }
+            });
+        }
+    };
+    ImgMapComponent.prototype.onMouseUp = function (event) {
+        if (this.draggable) {
+            if (this.draggedIndex != null) {
+                var cursor = this.cursor(event);
+                var marker = this.markers[this.draggedIndex];
+                var dimen = this.pixelToMarker(cursor);
+                marker.x = dimen[0];
+                marker.y = dimen[1];
+                this.markers[this.draggedIndex] = marker;
+                this.draggedIndex = null;
+                this.draw();
+            }
+        }
     };
     __decorate([
         core_1.ViewChild('canvas')
@@ -239,7 +352,7 @@ var ImgMapComponent = (function () {
                 '.img-map canvas, .img-map img { position: absolute; top: 0; left: 0; }',
                 '.img-map img { display: block; height: auto; max-width: 100%; }'
             ],
-            template: "\n    <div\n      class=\"img-map\"\n      #container\n      (window:resize)=\"onResize($event)\"\n    >\n      <img\n        #image\n        [src]=\"src\"\n        (load)=\"onLoad($event)\"\n      >\n      <canvas\n        #canvas\n        (click)=\"onClick($event)\"\n        (mousemove)=\"onMousemove($event)\"\n        (mouseout)=\"onMouseout($event)\"\n      ></canvas>\n    </div>\n  "
+            template: "\n    <div\n      class=\"img-map\"\n      #container\n      (window:resize)=\"onResize($event)\"\n    >\n      <img\n        #image\n        [src]=\"src\"\n        (load)=\"onLoad($event)\"\n      >\n      <canvas\n        #canvas\n        (click)=\"onClick($event)\"\n        (mousemove)=\"onMousemove($event)\"\n        (mouseout)=\"onMouseout($event)\"\n        (mousedown)=\"onMouseDown($event)\"\n        (mouseup)=\"onMouseUp($event)\" \n      ></canvas>\n    </div>\n  "
         })
     ], ImgMapComponent);
     return ImgMapComponent;
@@ -262,6 +375,8 @@ var Marker = (function () {
         this.base = ShapeType.Circle;
         this.size = 10;
         this.image = "";
+        this.imageWidth = 0;
+        this.imageHeight = 0;
         this.data = {};
         this.x = x;
         this.y = y;
@@ -271,11 +386,6 @@ var Marker = (function () {
     }
     Marker.prototype.setsize = function (size) {
         this.size = size;
-    };
-    Marker.prototype.setAsComposite = function (image, base) {
-        this.image = image;
-        this.type = MarkerType.Composite;
-        this.base = base;
     };
     /**
      * Convert a percentage position to a pixel position.
@@ -290,6 +400,13 @@ var Marker = (function () {
     Marker.prototype.setData = function (data) {
         this.data = data;
         return this;
+    };
+    Marker.prototype.setAsComposite = function (image, base, width, height) {
+        this.image = image;
+        this.type = MarkerType.Composite;
+        this.base = base;
+        this.imageWidth = width;
+        this.imageHeight = height;
     };
     return Marker;
 }());
