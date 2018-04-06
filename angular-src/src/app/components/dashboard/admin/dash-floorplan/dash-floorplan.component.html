@@ -5,21 +5,34 @@
 
     <br/>
 
+    <div style="float: right">
+      <button mat-button color="primary" (click)="addBeacon()" >+ Beacon</button>
+      <button mat-button >+ Content Area</button>
+      <button mat-raised-button color="accent" (click)="saveBeacon()" *ngIf="changed" style="float: right" >Save</button>
+
+    </div>
+    <br/>
+    <br/>
     <div>
-      <img-map
+      <img-map #imgMap
         src="{{this.values.getServiceEndPoint()+floorplan.url}}"
         [markers]="pins"
         (viewDidAppear)="floorplanAppeared($event)"
-        (change)="onSelected($event)"></img-map>
+        (change)="onSelected($event)"
+        imageSmoothing="true"
+        smoothingQuality="high"
+        canDrag="true"></img-map>
 
        </div>
     <br/>
-
     <div>
+      <br/>
+
       <br/>
       <h4>Floorplan - Details:</h4>
 
-      <strong>Beacon count: </strong> <span>0</span> <br/>
+
+      <strong>Beacon count: </strong> <span>{{getBeaconSize()}}</span> <br/>
       <strong>Content Areas: </strong> <span>0</span> <br/>
       <strong>Total Assigned Contents so Far: </strong> <span></span> <br/>
 
@@ -30,7 +43,11 @@
       <strong>Date Added: </strong> <span> {{floorplan.created}} </span> <br/>
       <strong>Size: </strong> <span>{{floorplan.size | fileSize}}</span> <br/>
 
-      <button mat-raised-button color="warn" (click)="deleteFloorPlan()" *ngIf="can_delete" style="float: right">Delete Floorplan</button>
+      <button mat-raised-button  *ngIf="can_manage_project" style="float: right" (click)="changeName()" >Change Name</button> <br/>
+      <br/>
+
+        <button mat-raised-button color="warn" (click)="deleteFloorPlan()" *ngIf="can_delete" style="float: right">Delete Floorplan</button>
+
       <br/>
       <br/>
     </div>

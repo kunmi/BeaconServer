@@ -2,8 +2,13 @@ const mongoose = require("mongoose");
 const dbconfig = require('../config/db');
 const User = require('./user');
 var hat = require('hat');
+var ObjectId = require('mongodb').ObjectID;
+
 const FloorPlan = require("./floorplan");
-const FloorPlanSchema = mongoose.model('FloorPlan').schema;
+const FloorPlanSchema =  mongoose.model('FloorPlan').schema;
+
+const  Beacon = require("./beacon");
+
 
 //Project Schema
 const ProjectSchema =mongoose.Schema({
@@ -39,6 +44,9 @@ const Project = module.exports = mongoose.model('Project', ProjectSchema );
 
 
 module.exports.getProjectByID = function (id, callback) {
+    //
+    // you can select the post without any comments also
+    //db.posts.find({_id: 54}, {comments: -1})
     Project.findById(id, callback);
 };
 
@@ -52,7 +60,7 @@ module.exports.updateProject = function (id,query, callback){
 
 module.exports.deleteProject = function (id, callback) {
     Project.findByIdAndRemove(id, {}, callback);
-}
+};
 
 module.exports.getAllProject = (callback)=>{
     Project.find({},callback);
@@ -138,10 +146,10 @@ module.exports.getFloorPlanFromProject = function (floorPlanId, projectId, callb
 };
 
 
-module.exports.deleteFloorplanWithId = function (id, projectId,callback) {
+module.exports.saveFloorPlanName = function (id, projectId, name, callback) {
     Project.update(
-        { "_id": projectId },
-        { "$pull": { "floorPlans": { "_id": id } } })
+        { "_id": projectId, "floorPlans._id":id },
+        { "$set": { "floorPlans.$.name": name.name } })
         .then((raw) =>
             {
                 callback(null,raw.nModified);
@@ -150,3 +158,73 @@ module.exports.deleteFloorplanWithId = function (id, projectId,callback) {
             callback(error, null);
         });
 };
+
+module.exports.saveBeaconsIntoFloorPlan = function (floorPlanId, projectId, models, callback) {
+    let newBeacons = [];
+    let preExistingBeacons = [];
+
+    for(let i=0; i<models.length; i++)
+    {
+        let b = models[i];
+        let beacon = new Beacon.Beacon();
+
+        if(b.type.toLowerCase() === "ibeacon")
+        {
+            beacon =  FloorPlan.newIbeacon(b);
+        }
+        else
+        {
+            beacon = FloorPlan.newEddystoneBeacon(b);
+        }
+
+        if(b._id)
+        {
+            beacon._id = ObjectId(b._id);
+            preExistingBeacons.push(beacon);
+        }
+        else
+        {
+            newBeacons.push(beacon);
+        }
+
+    }
+    Project.findOne(projectId, (err,project)=>{
+
+        const floorPlan = project.floorPlans.id(floorPlanId);
+
+        for(let i=0; i< preExistingBeacons.length; i++)
+        {
+            let beacon = preExistingBeacons[i];
+            let bs = floorPlan.beacons.id(beacon._id);
+            bs.map.x = beacon.map.x;
+            bs.map.y = beacon.map.y;
+            bs.beacon = beacon.beacon;
+            bs.save(err=>{
+                if(err)
+                console.log(err.message);
+            });
+        }
+
+        for (let i=0; i< newBeacons.length; i++)
+        {
+            floorPlan.beacons.push(newBeacons[i]);
+        }
+
+
+        project.save((err) => {
+
+            if(err)
+            {
+                console.log(err.message);
+                callback(err);
+            }
+            else {
+                 callback(null);
+            }
+
+        });
+
+    });
+
+};
+

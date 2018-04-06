@@ -66,6 +66,21 @@ export class ImgMapComponent {
   @Input()
   src: string;
 
+  @Input('imageSmoothing')
+  imageSmoothingEnabled: boolean = false;
+
+
+  /**
+   *  Quality of drawn image - low|medium|high. Dependent on if ImageSmoothing is enabled
+   * @type {string}
+   */
+  @Input('smoothingQuality')
+  imageSmoothingQuality:string = "medium";
+
+  @Input('canDrag')
+  draggable:boolean = false;
+
+
   /**
    * On change event.
    */
@@ -102,19 +117,11 @@ export class ImgMapComponent {
   //Todo
   //Move image smoothing and dragging to @input
 
-  /**
-   *  Quality of drawn image - low|medium|high. Dependent on if ImageSmoothing is enabled
-   * @type {string}
-   */
-  imageSmoothingQuality = "medium";
 
-  imageSmoothingEnabled = false;
-
-
-  draggable = false;
-
-  draggedIndex: number;
+  draggedIndex: number = -1;
   draggedPosition = null;
+
+
 
 
 
@@ -125,8 +132,13 @@ export class ImgMapComponent {
 
   constructor(private renderer: Renderer) {}
 
-  private change(): void {
-    if (this.markerActive === null) {
+  private change(marker?): void {
+
+    if(marker){
+      this.changeEvent.emit(marker);
+    }
+
+    else if (this.markerActive === null) {
       this.changeEvent.emit(null);
     } else {
       this.changeEvent.emit(this.markers[this.markerActive]);
@@ -272,6 +284,17 @@ export class ImgMapComponent {
   }
 
 
+  addMarker(m:Marker)
+  {
+    this.markers.push(m);
+
+    if (this.changeEvent.observers.length>0) {
+      this.change(m)
+    }
+    else {
+      this.draw();
+    }
+  }
 
   createMarker(coords: number[], shape?:ShapeType): Marker{
    let dimension = this.pixelToMarker(coords);
@@ -311,6 +334,7 @@ export class ImgMapComponent {
   /**
    * Clears the canvas and draws the markers.
    */
+
   draw(): void {
     const canvas: HTMLCanvasElement = this.canvas.nativeElement;
     const container: HTMLDivElement = this.container.nativeElement;
@@ -323,27 +347,28 @@ export class ImgMapComponent {
     const context = canvas.getContext('2d');
     context.clearRect(0, 0, width, height);
 
-    this.markers.forEach((marker, index) => {
 
-      if(!(this.draggedIndex!=null && this.draggedIndex!=index)) {
+
+    for(let index= 0; index< this.markers.length; index++)
+    {
+
+      if(index == this.draggedIndex)
+        continue;
+
         if (this.markerActive === index) {
-          this.drawMarker(marker, 'active');
+          this.drawMarker(this.markers[index], 'active');
         } else if (this.markerHover === index) {
-          this.drawMarker(marker, 'hover');
+          this.drawMarker(this.markers[index], 'hover');
         } else {
-          this.drawMarker(marker);
+          this.drawMarker(this.markers[index]);
         }
-      }
-    });
+    }
 
     if(this.draggable)
     {
-      if(this.draggedIndex!=null)
+      if(this.draggedIndex>=0)
       {
         let marker: Marker = this.markers[this.draggedIndex];
-        let dimen = this.pixelToMarker(this.draggedPosition);
-        marker.x = dimen[0];
-        marker.y = dimen[1];
         this.drawMarker(marker);
       }
     }
@@ -351,6 +376,7 @@ export class ImgMapComponent {
   }
 
   private onClick(event: MouseEvent): void {
+
     const cursor = this.cursor(event);
     var active = false;
     if (this.changeEvent.observers.length) {
@@ -368,11 +394,18 @@ export class ImgMapComponent {
         this.markerActive = null;
         change = true;
       }
+
+
+
+
       if (change) this.change();
     }
     if (!active && this.markEvent.observers.length) {
       this.mark(cursor);
     }
+
+
+
   }
 
   private onLoad(event: UIEvent): void {
@@ -400,8 +433,12 @@ export class ImgMapComponent {
       }
       if (draw) this.draw();
 
-      if(this.draggedIndex != null) {
-        this.draggedPosition = cursor;
+      if(this.draggedIndex >= 0) {
+        //this.draggedPosition = cursor;
+        let dimen = this.pixelToMarker(cursor);
+        this.markers[this.draggedIndex].x =dimen[0];
+        this.markers[this.draggedIndex].y = dimen[1];
+
         this.draw();
 
       }
@@ -427,7 +464,8 @@ export class ImgMapComponent {
     {
         this.markers.forEach((marker, index) => {
           if (this.insideMarker(marker, cursor)) {
-            if (this.draggedIndex == null) {
+            if (this.draggedIndex <0) {
+              this.markerActive = null;
               this.draggedIndex = index;
             }
           }
@@ -440,18 +478,16 @@ export class ImgMapComponent {
     if(this.draggable)
     {
 
-      if(this.draggedIndex != null)
+      if(this.draggedIndex >= 0)
       {
-        const cursor = this.cursor(event);
+        if (this.changeEvent.observers.length>0) {
+          this.change(this.markers[this.draggedIndex])
+        }
+        else {
+          this.draw();
+        }
+        this.draggedIndex = -1;
 
-        let marker:Marker = this.markers[this.draggedIndex];
-        let dimen = this.pixelToMarker(cursor);
-        marker.x =dimen[0];
-        marker.y = dimen[1];
-        this.markers[this.draggedIndex] = marker;
-        this.draggedIndex = null;
-
-        this.draw();
 
     }
     }
@@ -493,7 +529,6 @@ export class Marker
   }
 
 
-
     /**
      * Convert a percentage position to a pixel position.
      */
@@ -519,6 +554,11 @@ export class Marker
     this.imageWidth = width;
     this.imageHeight = height;
   }
+
+
+
+
+
 
 
 

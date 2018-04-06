@@ -22,6 +22,8 @@ import {UserProvider} from "../../services/user.service";
 import {FloorplanProvider} from "../../services/floorplan.service";
 import {ImgMapComponent} from "../plugin/ng2-img-map";
 import {FileSizePipe} from "../plugin/file-size.pipe";
+import {BeaconDialogComponent} from "./admin/dash-beacon/beacon-dialog.component";
+import {DialogFloorPlanNameComponent} from "./admin/dash-floorplan/dialog-floorplan-name.component";
 
 
 @NgModule({
@@ -41,9 +43,11 @@ import {FileSizePipe} from "../plugin/file-size.pipe";
     ProjectImageDialogComponent,
     DashFloorplanComponent,
     ImgMapComponent,
-    FileSizePipe
+    FileSizePipe,
+    BeaconDialogComponent,
+    DialogFloorPlanNameComponent
   ],
-  entryComponents:[YesNoDialogComponent, DashProjectDialogComponents, InfoDialogComponent, ProjectImageDialogComponent],
+  entryComponents:[YesNoDialogComponent, DashProjectDialogComponents, InfoDialogComponent, ProjectImageDialogComponent, BeaconDialogComponent, DialogFloorPlanNameComponent],
   imports: [
     DashboardRoutingModule,
    CommonModule,

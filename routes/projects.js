@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
-
 const Project = require('../models/project');
 const User = require('../models/user');
 const dbConfig = require('../config/db');
@@ -372,11 +371,8 @@ router.post('/:id/upload', passport.authenticate('jwt', {session:false}), (req, 
                     res.send({success: false, msg : err.message});
                     console.error(err);
                 }
-
                 else
                 {
-
-
                     const multerConf = {
 
                         storage : multer.diskStorage({

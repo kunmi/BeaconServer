@@ -11,6 +11,7 @@ class Image {
         this.size = floorplan.size;
         this.created = floorplan.created;
         this.url = "floorplans/"+floorplan.filename;
+        this.beacon_count = floorplan.beacons.length;
  }
 
 }

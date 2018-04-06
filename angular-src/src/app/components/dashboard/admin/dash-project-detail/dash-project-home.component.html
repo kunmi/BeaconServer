@@ -54,22 +54,30 @@
   <mat-card class="container">
     <div>
       <h4>Floor Plans and Beacons</h4>
-      <p>The following users can assign content to {{title}}</p>
       <br>
 
-      <div class="row">
+      <div class="row" >
 
       <div *ngFor="let image of images; let i = index">
 
-        <mat-card style="width: 250px; height: 250px; display: inline-block; margin-left: 10px; margin-top: 15px" (click)="showFloorPlan(image.id)">
+        <mat-card style="width: 250px; height: 250px; display: inline-block; margin-left: 10px; margin-top: 15px;
+                        position: relative" (click)="showFloorPlan(image.id)">
+          <div style="
+          background-color: rgba(0, 0, 0, 0.7);
+          width: auto; height: auto; position: absolute;
+          top: 0px; right: 10px;
+          padding: 5px">
+            <span style="color: #FFFFFF">{{image.beacon_count>0? image.beacon_count+" "+(image.beacon_count>1?"beacons": "beacon") : "no beacons"}}</span>
+          </div>
 
           <div style="width: 98%; height: 80%; overflow-x: auto; overflow-y: auto">
             <img src="{{this.values.getServiceEndPoint()+image.url}}" style="height: 100%; width: 100%"  />
           </div>
 
           <div style="height: 98%; height: 18%; margin-top: 10px">
-          <strong>Name: </strong>  <span> {{image.name}} </span> <br/>
-          <strong>Beacons: </strong> <span>0</span>
+
+            <p style="margin: auto auto; text-align: center"> {{image.name}} </p> <br/>
+
           </div>
 
         </mat-card>

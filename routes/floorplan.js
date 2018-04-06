@@ -18,8 +18,6 @@ router.get('/:id/project/:projectId', passport.authenticate('jwt', {session:fals
     let presentUser = req.user;
     if(presentUser)
     {
-
-
         Project.getFloorPlanFromProject(ObjectId(req.params.id),ObjectId(req.params.projectId), (err, project, floorplan)=>{
 
             if(err)
@@ -41,8 +39,7 @@ router.get('/:id/project/:projectId', passport.authenticate('jwt', {session:fals
                 result.floorplan = floorplan;
                 result.project = JSON.parse(JSON.stringify(project));
 
-
-                    res.send({success: true, data: result});
+                res.send({success: true, data: result});
             }
 
         });
@@ -105,6 +102,81 @@ router.delete('/:id/project/:projectId', passport.authenticate('jwt', {session:f
 
 
 
+
+        }
+        else
+        {
+            res.send({success: false, msg: "Not Permitted"});
+        }
+    }
+
+    else{
+        res.sendStatus(401);
+    }
+
+});
+
+//save Beacons
+router.post('/:id/project/:projectId/beacons', passport.authenticate('jwt', {session:false}), (req, res, next) => {
+
+    let presentUser = req.user;
+
+    if(presentUser)
+    {
+        //Check if user can actually access such data
+        if(presentUser.roles.manage_users && presentUser.roles.manage_roles && presentUser.roles.manage_projects && presentUser.isadmin)
+        {
+
+            Project.saveBeaconsIntoFloorPlan(ObjectId(req.params.id), ObjectId(req.params.projectId), req.body, (err)=>{
+
+                if(err)
+                {
+                    res.send({success: false, msg: err.msg});
+                }
+                else
+                {
+                    res.send({success: true});
+                }
+
+            });
+
+        }
+        else
+        {
+            res.send({success: false, msg: "Not Permitted"});
+        }
+    }
+
+    else{
+        res.sendStatus(401);
+    }
+
+});
+
+
+//save FloorPlan Name
+router.post('/:id/project/:projectId/name', passport.authenticate('jwt', {session:false}), (req, res, next) => {
+
+    let presentUser = req.user;
+
+    if(presentUser)
+    {
+        //Check if user can actually access such data
+        if(presentUser.roles.manage_users && presentUser.roles.manage_roles && presentUser.roles.manage_projects && presentUser.isadmin)
+        {
+
+            Project.saveFloorPlanName(ObjectId(req.params.id), ObjectId(req.params.projectId), req.body, (err)=>{
+
+                if(err)
+                {
+                    res.send({success: false, msg: err.message});
+                }
+                else
+                {
+                    res.send({success: true});
+                }
+
+            });
 
         }
         else

@@ -15,7 +15,7 @@ mongoose.Promise = Promise;
 
 //Connect to DB
 mongoose.connect(dbConfig.database, {
-    useMongoClient : true,
+    //useMongoClient : true,
     promiseLibrary: global.Promise
 
 });
