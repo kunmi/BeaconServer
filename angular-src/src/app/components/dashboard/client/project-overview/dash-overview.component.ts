@@ -41,12 +41,7 @@ export class DashOverviewComponent implements OnInit {
             this.projectProvider.getProject(params['id']).subscribe(data => {
               this.presentProject = data.project;
 
-
-
-
-
               let userAllowed = false;
-
               this.presentProject.users.forEach((user, index) =>{
                   if(user.user_id === this.presentUser._id)
                   {

@@ -218,9 +218,7 @@ export class DashProjectHomeComponent implements OnInit {
             break;
           }
         }
-
       }
-
 
       if (this.canManageProjects) {
         this.users = allusers;

@@ -25,6 +25,7 @@ import {FileSizePipe} from "../plugin/file-size.pipe";
 import {BeaconDialogComponent} from "./admin/dash-beacon/beacon-dialog.component";
 import {DialogFloorPlanNameComponent} from "./admin/dash-floorplan/dialog-floorplan-name.component";
 import {DialogContentAreaNameComponent} from "./admin/dash-floorplan/dialog-contentarea-name.component";
+import {ClientFloorplanComponent} from "./client/floorplan/floorplan.component";
 
 
 @NgModule({
@@ -47,7 +48,8 @@ import {DialogContentAreaNameComponent} from "./admin/dash-floorplan/dialog-cont
     FileSizePipe,
     BeaconDialogComponent,
     DialogFloorPlanNameComponent,
-    DialogContentAreaNameComponent
+    DialogContentAreaNameComponent,
+    ClientFloorplanComponent
   ],
   entryComponents:[YesNoDialogComponent, DashProjectDialogComponents, InfoDialogComponent, ProjectImageDialogComponent, BeaconDialogComponent, DialogFloorPlanNameComponent, DialogContentAreaNameComponent],
   imports: [
