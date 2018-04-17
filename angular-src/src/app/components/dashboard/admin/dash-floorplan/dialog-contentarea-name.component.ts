@@ -11,7 +11,7 @@ import {Observable} from "rxjs/Observable";
 import {FloorplanProvider} from "../../../../services/floorplan.service";
 
 @Component({
-  selector: 'dialog-floorplan-name',
+  selector: 'dialog-contentarea-name',
   template: `<main>
     <div class="container">
 
@@ -19,7 +19,7 @@ import {FloorplanProvider} from "../../../../services/floorplan.service";
 
         <div>
 
-          <h4>Floor-Plan Name Change</h4>
+          <h4> Content Area Name</h4>
 
           <mat-form-field class="input-full-width">
             <input matInput placeholder="Name" [(ngModel)]="name"  name="name"  id="name" [disabled]="disable_info" required="required" >
@@ -36,14 +36,10 @@ import {FloorplanProvider} from "../../../../services/floorplan.service";
   </main>`
 })
 
-export class DialogFloorPlanNameComponent implements OnInit {
+export class DialogContentAreaNameComponent implements OnInit {
 
   form: FormGroup;
-  name: "";
-  floorplanId = "";
-  projectId = "";
-
-
+  name:String = "";
 
   disable_info = false;
 
@@ -54,7 +50,7 @@ export class DialogFloorPlanNameComponent implements OnInit {
               private floorplanProvider: FloorplanProvider,
               private authService: AuthService,
               private dialog: MatDialog,
-              private dialogRef: MatDialogRef<DialogFloorPlanNameComponent>,
+              private dialogRef: MatDialogRef<DialogContentAreaNameComponent>,
               private fb: FormBuilder,
               @Inject(MAT_DIALOG_DATA) public data: any) {
 
@@ -68,9 +64,7 @@ export class DialogFloorPlanNameComponent implements OnInit {
     });
 
     if (this.data) {
-        this.name = this.data.name;
-        this.floorplanId = this.data.floorplanId;
-        this.projectId = this.data.projectId;
+      this.name = this.data.area.name
     }
 
   }
@@ -81,13 +75,8 @@ export class DialogFloorPlanNameComponent implements OnInit {
 
 
   save(){
-
-    this.floorplanProvider.saveFloorPlanName(this.floorplanId, this.projectId, this.name).subscribe(result=>{
-      result.name = this.name;
-      this.dialogRef.close({data: result});
-
-    });
-
+    this.data.area.name = this.name;
+      this.dialogRef.close({data: this.data, index: this.data.index})
   }
 
 

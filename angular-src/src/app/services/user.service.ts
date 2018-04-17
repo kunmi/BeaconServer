@@ -4,6 +4,7 @@ import 'rxjs/add/operator/map';
 import {User} from "../models/User";
 import {AuthService} from "./auth.service";
 import {Values} from "../models/Values";
+import {Project} from "../models/project";
 
 
 
@@ -24,8 +25,6 @@ export class UserProvider{
     return this.http.get<Array<User>>(this.values.getServiceEndPoint()+'users', {headers: headers})
       .map(res => res);
   }
-
-
 
   getUser(id){
     let headers = new HttpHeaders();
@@ -62,6 +61,7 @@ export class UserProvider{
     return this.http.delete<RegisterResultData>(this.values.getServiceEndPoint()+'users/'+user._id,  {headers: headers})
       .map(res => res);
   }
+
 
 
 

@@ -303,5 +303,4 @@ export class DashProjectHomeComponent implements OnInit {
   this.router.navigate(['../', this.presentProject._id, "floorplan", id], {relativeTo : this.activeRouter});
   }
 
-
 }

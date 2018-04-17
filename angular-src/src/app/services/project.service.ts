@@ -102,6 +102,16 @@ export class ProjectProvider{
     .map(res => res);
   }
 
+  //FRONT END
+  getProjectsForUser(userId){
+    let headers = new HttpHeaders();
+    this.authService.loadToken();
+    headers = headers.append('Authorization', this.authService.authToken);
+    headers = headers.append('Content-Type', 'application/json');
+    return this.http.get<Array<Project>>(this.values.getServiceEndPoint()+'projects/foruser/'+userId, {headers: headers})
+      .map(res => res);
+  }
+
 
 }
 

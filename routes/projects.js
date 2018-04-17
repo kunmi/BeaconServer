@@ -500,3 +500,56 @@ router.get('/:id/images', passport.authenticate('jwt', {session:false}), (req, r
 });
 
 module.exports = router;
+
+
+// FRONT-END
+router.get('/foruser/:userId', passport.authenticate('jwt', {session:false}), (req, res, next) => {
+
+    let presentUser = req.user;
+
+    if(presentUser) {
+
+        Project.getAllProjectForUser(ObjectId(req.params.userId),(err, result) => {
+
+            if (err) {
+                console.error(err, 'Uncaught Exception thrown');
+                res.send([]);
+                return
+            }
+
+            var projects = [];
+
+
+            result.forEach(function (project) {
+
+                var floorPlans = [];
+                project.floorPlans.forEach((floorplan)=>{
+
+                    floorPlans.push({
+                        _id: floorplan._id,
+                        name: floorplan.name
+                    })
+
+                });
+
+
+                projects.push({
+                    _id: project._id,
+                    name: project.name,
+                    email: project.email,
+                    description: project.description,
+                    floorPlans: floorPlans
+                });
+            });
+
+            res.send(projects);
+        });
+
+
+    }
+    else
+    {
+        res.send({success: false, msg: 'Not Authorized'});
+    }
+
+});

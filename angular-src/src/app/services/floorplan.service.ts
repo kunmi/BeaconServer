@@ -55,5 +55,20 @@ export class FloorplanProvider {
   }
 
 
+  deleteBeaconFromFloorPlan(id, projectId, beaconId){
+    let headers = new HttpHeaders();
+    this.authService.loadToken();
+    headers = headers.append('Authorization', this.authService.authToken);
+    headers.append('Content-Type', 'application/json');
+    return this.http.delete<any>(this.values.getServiceEndPoint()+'floorplan/'+id+'/project/'+projectId+
+      '/beacon/'+beaconId,{headers: headers})
+      .map(res => res);
+  }
+
+
+
+
+
+
 
 }

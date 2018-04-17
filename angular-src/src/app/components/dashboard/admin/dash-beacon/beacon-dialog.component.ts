@@ -23,8 +23,8 @@ import {Observable} from "rxjs/Observable";
           <br/>
           <section class="example-section">
             <label class="example-margin">Type:</label>
-            <mat-radio-group [(ngModel)]="model.type" name="kind">
-              <mat-radio-button  value="ibeacon">iBeacon</mat-radio-button>
+            <mat-radio-group [(ngModel)]="model.type" name="kind" [disabled]="canDelete()">
+              <mat-radio-button  value="iBeacon">iBeacon</mat-radio-button>
               <mat-radio-button  value="eddystone">Eddystone</mat-radio-button>
             </mat-radio-group>
           </section>
@@ -33,7 +33,7 @@ import {Observable} from "rxjs/Observable";
           
           <section>
 
-            <div *ngIf="model.type == 'ibeacon'">
+            <div *ngIf="model.type == 'iBeacon'">
             <mat-form-field class="input-full-width">
               <input matInput placeholder="UUID" [(ngModel)]="model.uuid"  name="uuid"  id="uuid" [disabled]="disable_info" required="required" >
             </mat-form-field>
@@ -52,11 +52,11 @@ import {Observable} from "rxjs/Observable";
             
             <div *ngIf="model.type == 'eddystone'">
               <mat-form-field class="input-full-width">
-                <input matInput placeholder="Namespace ID" [(ngModel)]="model.uuid"  name="uuid"  id="uuid" [disabled]="disable_info" required="required" >
+                <input matInput placeholder="Namespace ID" [(ngModel)]="model.nameSpaceId"  name="nameSpaceId"  id="nameSpaceId" [disabled]="disable_info" required="required" >
               </mat-form-field>
 
               <mat-form-field class="input-full-width">
-                <input matInput placeholder="Instance ID" [(ngModel)]="model.minor"  name="minor"  id="minor" [disabled]="disable_info" >
+                <input matInput placeholder="Instance ID" [(ngModel)]="model.instanceId"  name="instanceId"  id="instanceId" [disabled]="disable_info" >
               </mat-form-field>
               <mat-form-field class="input-full-width">
                 <input matInput placeholder="Map to Number: " [(ngModel)]="model.ref"  name="ref"  id="ref" [disabled]="disable_info" >
@@ -69,7 +69,8 @@ import {Observable} from "rxjs/Observable";
           <br/>
           
 
-          <button mat-raised-button color="primary" (click)="addBeacon()" >Add Beacon</button>
+          <button mat-raised-button color="primary" (click)="addBeacon()" >{{submitText}}</button>
+          <button mat-raised-button color="warn" (click)="deleteBeacon()" *ngIf="data" >Delete Beacon</button>
           
             
           </div>
@@ -90,15 +91,22 @@ export class BeaconDialogComponent implements OnInit {
     major: "",
     minor: "",
     ref: "",
-    txpower: "",
-    type : "ibeacon"
+    txPower: "",
+    type : "iBeacon",
+    nameSpaceId: "",
+    instanceId: ""
   };
 
 
   align = 'start';
 
   disable_info = false;
-  submitText = "Upload Image";
+
+  submitText = "Add Beacon";
+
+
+
+
 
   constructor(private validateService: ValidateService,
               private flashMessagesService: FlashMessagesService,
@@ -120,8 +128,27 @@ export class BeaconDialogComponent implements OnInit {
 
     if (this.data) {
 
-    }
+      this.submitText = "Save";
 
+      let beacon = this.data.beacon;
+
+      this.model.txPower = beacon.txPower;
+      this.model.ref = beacon.ref;
+      this.model.type = beacon.type;
+
+      if(beacon.type == "iBeacon")
+      {
+        this.model.uuid = beacon.uuid;
+        this.model.major = beacon.major;
+        this.model.minor = beacon.minor;
+      }
+      else
+      {
+        this.model.nameSpaceId = beacon.nameSpaceId;
+        this.model.instanceId = beacon.instanceId;
+      }
+
+    }
 
   }
 
@@ -129,14 +156,49 @@ export class BeaconDialogComponent implements OnInit {
 
   }
 
+  canDelete(){
+    if(this.data && !this.disable_info)
+      return true;
+    else
+      return false;
+  }
 
   addBeacon(){
-
       if((this.model.uuid + "").trim().length > 0)
       {
-        this.dialogRef.close({data: this.model});
-      }
 
+        if(this.data)
+        {
+
+          this.data.beacon.type = this.model.type;
+          this.data.beacon.ref = this.model.ref;
+
+          if(this.model.type == "iBeacon")
+          {
+            this.data.beacon.uuid = this.model.uuid;
+            this.data.beacon.major = this.model.major;
+            this.data.beacon.minor = this.model.minor;
+          }
+          else
+          {
+            this.data.beacon.nameSpaceId = this.model.nameSpaceId;
+            this.data.beacon.instanceId = this.model.instanceId;
+          }
+
+          this.dialogRef.close({data: this.data.beacon, action: "edit", index : this.data.index});
+
+        }
+        else
+        {
+          this.dialogRef.close({data: this.model, action: "add"});
+        }
+
+
+      }
+  }
+
+  deleteBeacon(){
+    this.dialogRef.close({data: this.data.beacon, action: "delete", index : this.data.index});
   }
 
 

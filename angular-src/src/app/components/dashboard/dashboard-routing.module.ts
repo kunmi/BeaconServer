@@ -4,7 +4,7 @@ import {AuthGuard} from "../../guards/auth.guard";
 import {DashUsersComponent} from "./admin/dash-users/dash-users.component";
 import {NgModule} from "@angular/core";
 import {UserProvider} from "../../services/user.service";
-import {DashOverviewComponent} from "./client/dash-overview/dash-overview.component";
+import {DashOverviewComponent} from "./client/project-overview/dash-overview.component";
 import {DashProjectsComponent} from "./admin/dash-projects/dash-projects.component";
 import {ProjectProvider} from "../../services/project.service";
 import {ProfileComponent} from "./client/profile/profile.component";
@@ -24,7 +24,7 @@ const dashRoutes: Routes = [
       {path: 'projects/:projectid/floorplan/:floorplanid', component: DashFloorplanComponent},
 
 
-      {path: 'x', component: DashUsersComponent}
+      {path: 'project/:id', component: DashOverviewComponent}
     ]},
 ];
 

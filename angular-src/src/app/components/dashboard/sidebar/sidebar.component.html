@@ -1,10 +1,13 @@
 <ul class="nav nav-pills flex-column">
-  <li class="nav-item">
-    <a class="nav-link active" [routerLinkActive] = "['active']" [routerLink]="['overview']">Overview <span class="sr-only">(current)</span></a>
-  </li>
+
 </ul>
 
-<ul class="nav nav-pills flex-column" *ngIf="isadmin">
+<ul class="nav-list nav nav-pills flex-column" *ngIf="isadmin">
+
+  <li class="nav">
+    <a class="nav-link" [routerLinkActive] = "['active']" [routerLink]="['overview']">Overview <span class="sr-only">(current)</span></a>
+  </li>
+
   <li class="nav-item" *ngIf="isadmin">
     <a class="nav-link" [routerLinkActive] = "['active']" [routerLink]="['users']">Users</a>
   </li>
@@ -14,32 +17,28 @@
 
 </ul>
 
-<ul class="nav nav-pills flex-column">
-  <li class="nav-item">
-    <a class="nav-link" [routerLink]="['x']">Projects</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="#">Maps</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="#">Beacons</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="#">General Statistics</a>
-  </li>
+<hr />
 
-</ul>
+<ul class="nav-list nav nav-pills flex-column">
+  <li class="nav-item" *ngFor="let project of projects" >
+    <a class="nav-link" [routerLink]="'project/'+project._id" [routerLinkActive] = "['active']">{{project.name}}</a>
 
-<ul class="nav nav-pills flex-column">
-  <li class="nav-item">
-    <a class="nav-link" href="#">Maps</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="#">Beacons</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" href="#">Stats and Debugging</a>
+    <ul [routerLinkActive] = "['submenu']" class="nav-list">
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="'project/'+project._id" [routerLinkActive] = "['active2']">Home</a>
+       </li>
+
+      <li class="nav-item" *ngFor="let floorPlan of project.floorPlans; let i = index">
+        <a class="nav-link" [routerLink]="'project/'+project._id+'/floorplan/'+floorPlan._id" [routerLinkActive] = "['active2']">{{getFloorPlanName(floorPlan, i) | slice:0:20}}</a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" [routerLink]="'contents/'+project._id" [routerLinkActive] = "['active2']">Contents</a>
+      </li>
+    </ul>
+
   </li>
 
 
 </ul>
+

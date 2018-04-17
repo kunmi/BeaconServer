@@ -116,7 +116,7 @@ router.delete('/:id/project/:projectId', passport.authenticate('jwt', {session:f
 
 });
 
-//save Beacons
+//save Beacons and Content Areas
 router.post('/:id/project/:projectId/beacons', passport.authenticate('jwt', {session:false}), (req, res, next) => {
 
     let presentUser = req.user;
@@ -162,10 +162,48 @@ router.post('/:id/project/:projectId/name', passport.authenticate('jwt', {sessio
     if(presentUser)
     {
         //Check if user can actually access such data
-        if(presentUser.roles.manage_users && presentUser.roles.manage_roles && presentUser.roles.manage_projects && presentUser.isadmin)
+        if(presentUser.roles.manage_projects || presentUser.isadmin)
         {
 
             Project.saveFloorPlanName(ObjectId(req.params.id), ObjectId(req.params.projectId), req.body, (err)=>{
+
+                if(err)
+                {
+                    res.send({success: false, msg: err.message});
+                }
+                else
+                {
+                    res.send({success: true});
+                }
+
+            });
+
+        }
+        else
+        {
+            res.send({success: false, msg: "Not Permitted"});
+        }
+    }
+
+    else{
+        res.sendStatus(401);
+    }
+
+});
+
+
+//delete Beacon
+router.delete('/:id/project/:projectId/beacon/:beaconId', passport.authenticate('jwt', {session:false}), (req, res, next) => {
+
+    let presentUser = req.user;
+
+    if(presentUser)
+    {
+        //Check if user can actually access such data
+        if(presentUser.roles.manage_projects || presentUser.isadmin)
+        {
+
+            Project.deleteBeaconFromFloorPlan(ObjectId(req.params.id), ObjectId(req.params.projectId),  ObjectId(req.params.beaconId), (err)=>{
 
                 if(err)
                 {

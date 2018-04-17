@@ -32,6 +32,7 @@ body {
 
 }
 
+*.unselectable { -moz-user-select: -moz-none; -khtml-user-select: none; -webkit-user-select: none; -ms-user-select: none; user-select: none;}
 
 .spaceTop{
 
@@ -56,26 +57,54 @@ body {
 }
 
 /* Sidebar navigation */
-.sidebar {
+.nav-list {
   padding-left: 0;
   padding-right: 0;
+  list-style-type: none;
 }
 
-.sidebar .nav {
+.nav-list .nav {
   margin-bottom: 20px;
 }
 
-.sidebar .nav-item {
+.nav-list .nav-item {
   width: 100%;
 }
 
-.sidebar .nav-item + .nav-item {
+.nav-list .nav-item + .nav-item {
   margin-left: 0;
 }
 
-.sidebar .nav-link {
+.nav-list .nav-link {
   border-radius: 0;
 }
+
+
+
+.submenu {
+  margin-top: 5px;
+  padding-left: 24px;
+}
+
+.nav-list > li > ul:not(.submenu){
+  display: none;
+  visibility: hidden;
+
+}
+
+
+.submenu > nav-item a {
+  font-size: 14px;
+  padding-left: 26px !important;
+}
+
+.submenu > li > .active2
+{
+  background-color: #919aa1;
+  color: white;
+}
+
+
 
 /*
  * Dashboard

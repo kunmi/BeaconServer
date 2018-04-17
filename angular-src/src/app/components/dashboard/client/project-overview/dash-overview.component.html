@@ -1,0 +1,75 @@
+<main class="container">
+
+  <!-- class="container mat-elevation-z8" -->
+  <mat-card class="container">
+    <div>
+      <h2>{{presentProject.name}}</h2>
+      <p>{{presentProject.description}}</p>
+      <br>
+      <br>
+      <strong>E-Mail: </strong> <span>{{presentProject.email}}</span>
+      <hr/>
+      <strong>Access Token: </strong> <span> {{token}}</span>
+
+    </div>
+  </mat-card>
+  <br>
+
+  <mat-card class="container">
+    <div>
+      <h4>Floor Plans and Contents</h4>
+      <br>
+      <div class="row" >
+        <div *ngFor="let image of presentProject.floorPlans; let i = index">
+
+          <mat-card style="width: 250px; height: 250px; display: inline-block; margin-left: 10px; margin-top: 15px;
+                        position: relative" (click)="showFloorPlan(image.id)">
+            <div style="
+          background-color: rgba(0, 0, 0, 0.7);
+          width: auto; height: auto; position: absolute;
+          top: 0px; right: 10px;
+          padding: 5px">
+              <span style="color: #FFFFFF">{{image.beacon_count>0? image.beacon_count+" "+(image.beacon_count>1?"beacons": "beacon") : "no beacons"}}</span>
+            </div>
+
+            <div style="width: 98%; height: 80%; overflow-x: auto; overflow-y: auto">
+              <img src="{{this.values.getServiceEndPoint()+image.url}}" style="height: 100%; width: 100%"  />
+            </div>
+
+            <div style="height: 98%; height: 18%; margin-top: 10px">
+
+              <p style="margin: auto auto; text-align: center"> {{image.name}} </p> <br/>
+
+            </div>
+
+          </mat-card>
+
+        </div>
+      </div>
+
+      <br>
+
+
+
+
+    </div>
+
+    <div>
+      <h4>Messages / Contents</h4>
+      <p>The following users can assign content to {{title}}</p>
+      <br>
+      <br>
+      <mat-chip-list>
+        <mat-chip>Papadum</mat-chip>
+        <mat-chip>Naan</mat-chip>
+        <mat-chip>Dal</mat-chip>
+      </mat-chip-list>
+
+    </div>
+  </mat-card>
+
+  <br>
+
+
+
+</main>

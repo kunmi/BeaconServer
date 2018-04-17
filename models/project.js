@@ -1,3 +1,4 @@
+
 const mongoose = require("mongoose");
 const dbconfig = require('../config/db');
 const User = require('./user');
@@ -8,6 +9,7 @@ const FloorPlan = require("./floorplan");
 const FloorPlanSchema =  mongoose.model('FloorPlan').schema;
 
 const  Beacon = require("./beacon");
+const ContentArea = require("./contentarea");
 
 
 //Project Schema
@@ -30,8 +32,7 @@ const ProjectSchema =mongoose.Schema({
             {
             user_id: {
                 type: mongoose.Schema.Types.ObjectId,
-                ref : User,
-                unique: true
+                ref : User
             },
             token: String }
         ]
@@ -159,13 +160,21 @@ module.exports.saveFloorPlanName = function (id, projectId, name, callback) {
         });
 };
 
-module.exports.saveBeaconsIntoFloorPlan = function (floorPlanId, projectId, models, callback) {
+module.exports.saveBeaconsIntoFloorPlan = function (floorPlanId, projectId, items, callback) {
+
+    let beacons = items.beacons;
+    let areas = items.areas;
+
+
     let newBeacons = [];
     let preExistingBeacons = [];
 
-    for(let i=0; i<models.length; i++)
+    let newAreas = [];
+    let preExistingAreas = [];
+
+    for(let i=0; i<beacons.length; i++)
     {
-        let b = models[i];
+        let b = beacons[i];
         let beacon = new Beacon.Beacon();
 
         if(b.type.toLowerCase() === "ibeacon")
@@ -188,6 +197,25 @@ module.exports.saveBeaconsIntoFloorPlan = function (floorPlanId, projectId, mode
         }
 
     }
+
+    for (let i=0 ; i<areas.length; i++)
+    {
+        let a = areas[i];
+        let area = new ContentArea.ContentArea();
+        area.name = a.name;
+        area.coordinates = a.coordinates;
+
+        if(a._id)
+        {
+            area._id = ObjectId(a._id);
+            preExistingAreas.push(area);
+        }
+        else
+        {
+            newAreas.push(area);
+        }
+    }
+
     Project.findOne(projectId, (err,project)=>{
 
         const floorPlan = project.floorPlans.id(floorPlanId);
@@ -198,6 +226,20 @@ module.exports.saveBeaconsIntoFloorPlan = function (floorPlanId, projectId, mode
             let bs = floorPlan.beacons.id(beacon._id);
             bs.map.x = beacon.map.x;
             bs.map.y = beacon.map.y;
+            bs.ref = beacon.ref;
+
+            if(bs.type == "iBeacon")
+            {
+                bs.uuid = beacon.uuid;
+                bs.major = beacon.major;
+                bs.minor = beacon.minor;
+            }
+            else {
+                bs.nameSpaceId = beacon.nameSpaceId;
+                bs.instanceId = beacon.instanceId;
+            }
+
+
             bs.beacon = beacon.beacon;
             bs.save(err=>{
                 if(err)
@@ -208,6 +250,23 @@ module.exports.saveBeaconsIntoFloorPlan = function (floorPlanId, projectId, mode
         for (let i=0; i< newBeacons.length; i++)
         {
             floorPlan.beacons.push(newBeacons[i]);
+        }
+
+        for(let i=0; i< preExistingAreas.length; i++)
+        {
+            let a = preExistingAreas[i];
+            let area = floorPlan.areas.id(a._id);
+            area.name = a.name;
+            area.coordinates = a.coordinates;
+
+            area.save(err=>{
+                if(err)
+                    console.log(err.message);
+            });
+        }
+        for(let i=0; i< newAreas.length; i++)
+        {
+            floorPlan.areas.push(newAreas[i]);
         }
 
 
@@ -228,3 +287,28 @@ module.exports.saveBeaconsIntoFloorPlan = function (floorPlanId, projectId, mode
 
 };
 
+module.exports.deleteBeaconFromFloorPlan = function (floorPlanId, projectId, beaconId, callback) {
+    Project.findOne(projectId, (err,project)=>{
+
+        const floorPlan = project.floorPlans.id(floorPlanId);
+        floorPlan.beacons.id(beaconId).remove();
+        project.save((err) => {
+            if(err)
+            {
+                console.log(err.message);
+                callback(err);
+            }
+            else {
+                callback(null);
+            }
+
+        });
+
+    });
+
+};
+
+/**  FRONT END  **/
+module.exports.getAllProjectForUser = (userId,callback)=>{
+    Project.find({'users.user_id' : userId},callback);
+};

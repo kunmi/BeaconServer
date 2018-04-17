@@ -1,9 +1,11 @@
 const mongoose = require("mongoose");
 const User = require("./user");
 const Beacon = require("./beacon");
+const ContentArea = require('./contentarea');
 
 
 const BeaconPlanSchema =  mongoose.model('Beacon').schema;
+const ContentAreaSchema =  mongoose.model('ContentArea').schema;
 
 
 const FloorPlanSchema = module.exports = mongoose.Schema({
@@ -24,7 +26,8 @@ const FloorPlanSchema = module.exports = mongoose.Schema({
     size : String,
     mimeType: String,
     path: String,
-    beacons: [BeaconPlanSchema]
+    beacons: [BeaconPlanSchema],
+    areas: [ContentAreaSchema]
 });
 
 
@@ -55,7 +58,7 @@ module.exports.newIbeacon = function(model) {
             major: model.major,
             minor: model.minor,
         ref: model.ref,
-        txPower: model.txpower,
+        txPower: model.txPower,
         created: Date.now(),
         map : {
             x : model.map.x,
@@ -67,11 +70,11 @@ module.exports.newIbeacon = function(model) {
 
 module.exports.newEddystoneBeacon = function(model) {
     return new eddystone({
-        nameSpaceId: model.uuid,
-        instanceId: model.minor,
+        nameSpaceId: model.nameSpaceId,
+        instanceId: model.instanceId,
         frameType: "UID",
         ref: model.ref,
-        txPower: model.txpower,
+        txPower: model.txPower,
         created: Date.now(),
         map : {
             x : model.map.x,

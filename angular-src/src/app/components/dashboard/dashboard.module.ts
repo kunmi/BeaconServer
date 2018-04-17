@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import {DashboardComponent} from "./dashboard.component";
 import {SidebarComponent} from "./sidebar/sidebar.component";
 import {DashHomeComponent} from "./admin/dash-home/dash-home.component";
-import {DashOverviewComponent} from "./client/dash-overview/dash-overview.component";
+import {DashOverviewComponent} from "./client/project-overview/dash-overview.component";
 import {DashUsersComponent} from "./admin/dash-users/dash-users.component";
 import {ProfileComponent} from "./client/profile/profile.component";
 import {RegisterComponent} from "./admin/dash-users/register/register.component";
@@ -24,6 +24,7 @@ import {ImgMapComponent} from "../plugin/ng2-img-map";
 import {FileSizePipe} from "../plugin/file-size.pipe";
 import {BeaconDialogComponent} from "./admin/dash-beacon/beacon-dialog.component";
 import {DialogFloorPlanNameComponent} from "./admin/dash-floorplan/dialog-floorplan-name.component";
+import {DialogContentAreaNameComponent} from "./admin/dash-floorplan/dialog-contentarea-name.component";
 
 
 @NgModule({
@@ -45,9 +46,10 @@ import {DialogFloorPlanNameComponent} from "./admin/dash-floorplan/dialog-floorp
     ImgMapComponent,
     FileSizePipe,
     BeaconDialogComponent,
-    DialogFloorPlanNameComponent
+    DialogFloorPlanNameComponent,
+    DialogContentAreaNameComponent
   ],
-  entryComponents:[YesNoDialogComponent, DashProjectDialogComponents, InfoDialogComponent, ProjectImageDialogComponent, BeaconDialogComponent, DialogFloorPlanNameComponent],
+  entryComponents:[YesNoDialogComponent, DashProjectDialogComponents, InfoDialogComponent, ProjectImageDialogComponent, BeaconDialogComponent, DialogFloorPlanNameComponent, DialogContentAreaNameComponent],
   imports: [
     DashboardRoutingModule,
    CommonModule,
