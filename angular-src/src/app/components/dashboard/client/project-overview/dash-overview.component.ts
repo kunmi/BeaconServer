@@ -72,6 +72,7 @@ export class DashOverviewComponent implements OnInit {
 
 
   showFloorPlan(id){
-    this.router.navigate(['../', this.presentProject._id, "floorplan", id], {relativeTo : this.activeRouter});
+    //project/'+project._id+'/floorplan/'+floorPlan._id
+    this.router.navigate(['../', "floorplan", id], {relativeTo : this.activeRouter});
   }
 }

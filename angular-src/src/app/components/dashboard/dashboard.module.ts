@@ -26,6 +26,7 @@ import {BeaconDialogComponent} from "./admin/dash-beacon/beacon-dialog.component
 import {DialogFloorPlanNameComponent} from "./admin/dash-floorplan/dialog-floorplan-name.component";
 import {DialogContentAreaNameComponent} from "./admin/dash-floorplan/dialog-contentarea-name.component";
 import {ClientFloorplanComponent} from "./client/floorplan/floorplan.component";
+import {DialogAddContentComponent} from "./client/floorplan/dialog-add-content.component";
 
 
 @NgModule({
@@ -49,9 +50,18 @@ import {ClientFloorplanComponent} from "./client/floorplan/floorplan.component";
     BeaconDialogComponent,
     DialogFloorPlanNameComponent,
     DialogContentAreaNameComponent,
-    ClientFloorplanComponent
+    ClientFloorplanComponent,
+    DialogAddContentComponent
   ],
-  entryComponents:[YesNoDialogComponent, DashProjectDialogComponents, InfoDialogComponent, ProjectImageDialogComponent, BeaconDialogComponent, DialogFloorPlanNameComponent, DialogContentAreaNameComponent],
+  entryComponents:[
+    YesNoDialogComponent,
+    DashProjectDialogComponents,
+    InfoDialogComponent,
+    ProjectImageDialogComponent,
+    BeaconDialogComponent,
+    DialogFloorPlanNameComponent,
+    DialogContentAreaNameComponent,
+    DialogAddContentComponent],
   imports: [
     DashboardRoutingModule,
    CommonModule,

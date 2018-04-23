@@ -10,6 +10,7 @@ import {Values} from "../../../../models/Values";
 import {Marker, ImgMapComponent, ShapeType, Polygon} from "../../../plugin/ng2-img-map";
 import {BeaconDialogComponent} from "../../admin/dash-beacon/beacon-dialog.component";
 import {DialogContentAreaNameComponent} from "../../admin/dash-floorplan/dialog-contentarea-name.component";
+import {DialogAddContentComponent} from "./dialog-add-content.component";
 
 
 @Component({
@@ -133,7 +134,7 @@ export class ClientFloorplanComponent implements OnInit {
 
   showBeaconDetails(index) {
 
-    let dialogRef = this.dialog.open(BeaconDialogComponent, {
+    let dialogRef = this.dialog.open(DialogAddContentComponent, {
       width: '450px',
       data: {beacon: this.pins[index].data, index: index}
     });
@@ -186,7 +187,7 @@ export class ClientFloorplanComponent implements OnInit {
   showPolygonDetails(index){
     this.changed = true;
 
-    let dialogRef = this.dialog.open(DialogContentAreaNameComponent, {
+    let dialogRef = this.dialog.open(DialogAddContentComponent, {
       width: '450px',
       data: {
         index: index,
