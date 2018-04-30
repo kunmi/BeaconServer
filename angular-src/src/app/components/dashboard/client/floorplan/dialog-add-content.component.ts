@@ -9,6 +9,8 @@ import {ProjectProvider} from "../../../../services/project.service";
 import {UserProvider} from "../../../../services/user.service";
 import {Observable} from "rxjs/Observable";
 import {FloorplanProvider} from "../../../../services/floorplan.service";
+import {ContentProvider} from "../../../../services/content.service";
+import {DialogFloorPlanNameComponent} from "../../admin/dash-floorplan/dialog-floorplan-name.component";
 
 @Component({
   selector: 'dialog-add-content',
@@ -33,7 +35,7 @@ import {FloorplanProvider} from "../../../../services/floorplan.service";
           <br/>
           <br/>
           
-          <button mat-raised-button color="primary" (click)="save()" >Publish</button>
+          <button mat-raised-button color="primary" (click)="publish()" >Publish</button>
           
         </div>
 
@@ -66,10 +68,11 @@ export class DialogAddContentComponent implements OnInit {
               private flashMessagesService: FlashMessagesService,
               private userProvider: UserProvider,
               private floorplanProvider: FloorplanProvider,
+              private contentProvider: ContentProvider,
               private authService: AuthService,
               private dialog: MatDialog,
-              private dialogRef: MatDialogRef<DialogAddContentComponent>,
               private fb: FormBuilder,
+              private dialogRef: MatDialogRef<DialogAddContentComponent>,
               @Inject(MAT_DIALOG_DATA) public data: any) {
 
     this.form = this.fb.group({
@@ -78,6 +81,10 @@ export class DialogAddContentComponent implements OnInit {
 
 
     if (this.data) {
+
+      this.projectId = this.data.projectId;
+      this.floorplanId = this.data.floorplanId;
+
       if(this.data.beacon)
       {
         this.beaconId = this.data.beacon;
@@ -104,8 +111,8 @@ export class DialogAddContentComponent implements OnInit {
 
    let content: any = this.data.content = {
       title : this.title,
-      content : this.body,
-    }
+      body : this.body,
+    };
 
     if(this.beaconId)
     {
@@ -115,6 +122,18 @@ export class DialogAddContentComponent implements OnInit {
     {
       content.area = this.contentAreaId;
     }
+
+    this.contentProvider.publishContentIntoProjectAndFloorplan(this.projectId, this.floorplanId, content).subscribe(result=>{
+
+      if(result.success){
+        this.dialogRef.close({success : true});
+      }
+      else{
+        this.flashMessagesService.show("An error occurred "+result.msg);
+      }
+    });
+
+
 
     //this.dialogRef.close({data: result});
 

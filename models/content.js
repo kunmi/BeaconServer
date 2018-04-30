@@ -4,6 +4,7 @@ const dbconfig = require('../config/db');
 var ObjectId = require('mongodb').ObjectID;
 
 
+
 //User schema
 const ContentSchema = mongoose.Schema({
     title: {
@@ -14,26 +15,29 @@ const ContentSchema = mongoose.Schema({
         required: true,
     },
     floorplan_id:{ 
-        type: ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         required: false
     },
     project_id: {
-        type: ObjectId
+        type: mongoose.Schema.Types.ObjectId,
     },
     published: {
         type: Date
     },
     by: {
-        type: ObjectId
-    }
-    ,
-    beacons: [{ beacon_id: ObjectId }],
-    areas: [{ area_id: ObjectId}]
+        type: mongoose.Schema.Types.ObjectId,
+    },
+    beacons: [{ beacon_id: mongoose.Schema.Types.ObjectId }],
+    areas: [{ area_id:  mongoose.Schema.Types.ObjectId}]
 });
 
 
 const Content = module.exports = mongoose.model('Content', ContentSchema );
 
+
+module.exports.getAllContents = (callback)=>{
+    Content.find({},callback);
+};
 
 module.exports.getContentByID = function (id, callback) {
     Content.findById(id, callback);
@@ -42,7 +46,7 @@ module.exports.getContentByID = function (id, callback) {
 
 module.exports.getContentsByProject = function (projectId, callback) {
     const query = {project_id: projectId};
-    Content.findOne(query, callback);
+    Content.find(query, callback);
 };
 
 module.exports.getContentsByFloorplan = function (floorplanId,projectId, callback) {
@@ -63,12 +67,27 @@ module.exports.addContentToFloorPlan =  function(floorplanId, projectId, userId,
     c.project_id = projectId;
     c.floorplan_id = floorplanId;
     c.by = userId;
-    c.beacons.push(content.beacon);
-    c.area.push(content.area);
 
-    c.save().then((err,content)=>{
-        callback(null,content);
-    }).catch(callback(err, null));
+
+
+    c.save().then((newC)=>{
+
+
+        if(content.beacon)
+            newC.beacons.push(content.beacon._id);
+        if(content.area)
+            newC.areas.push(content.area._id);
+
+        newC.save().then(callback(null, newC)).
+        catch(err=>{callback(err,null)});
+
+    }).catch(err=>{
+        callback(err, null);
+    })
+
+
+
+
 
 };
 

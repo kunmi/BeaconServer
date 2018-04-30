@@ -5,7 +5,7 @@ import {Values} from "../models/Values";
 import {RegisterResultData} from "./project.service";
 
 @Injectable()
-export class FloorplanProvider {
+export class ContentProvider {
 
   constructor(
     private http: HttpClient,
@@ -19,7 +19,16 @@ export class FloorplanProvider {
     this.authService.loadToken();
     headers = headers.append('Authorization', this.authService.authToken);
     headers.append('Content-Type', 'application/json');
-    return this.http.post<any>(this.values.getServiceEndPoint()+'content/floorplan/'+floorplanId+'/project/'+projectId,{content: content},{headers: headers})
+    return this.http.post<any>(this.values.getServiceEndPoint()+'content/floorplan/'+floorplanId+'/project/'+projectId,content,{headers: headers})
+      .map(res => res);
+  }
+
+  getContentsFromProject(projectId){
+    let headers = new HttpHeaders();
+    this.authService.loadToken();
+    headers = headers.append('Authorization', this.authService.authToken);
+    headers.append('Content-Type', 'application/json');
+    return this.http.get<any>(this.values.getServiceEndPoint()+'content/project/'+projectId,{headers: headers})
       .map(res => res);
   }
 

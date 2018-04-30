@@ -136,48 +136,22 @@ export class ClientFloorplanComponent implements OnInit {
 
     let dialogRef = this.dialog.open(DialogAddContentComponent, {
       width: '450px',
-      data: {beacon: this.pins[index].data, index: index}
+      data: {
+        beacon: this.pins[index].data,
+        index: index,
+        projectId: this.projectID,
+        floorplanId: this.floorplanId}
     });
 
     dialogRef.afterClosed().subscribe(result => {
 
       if (result) {
-
-        if (result.action == "delete") {
-
-          if (result.data._id) {
-            this.floorService.deleteBeaconFromFloorPlan(this.floorplanId, this.projectID, result.data._id).subscribe((data) => {
-              if (data.success) {
-
-                this.snackBarRef.open("Beacon Removed", "Close", {
-                  duration: 3000,
-                });
-
-
-                this.pins.splice(result.index, 1);
-                this.floorplanContext.draw();
-
-              }
-              else {
-                this.flashMessagesService.show("An Error occured " + data.msg,
-                  {cssClass: 'alert-danger', timeout: 3000});
-              }
-            });
-          }
-          else {
-
-            this.pins.splice(result.index, 1);
-            this.floorplanContext.draw();
-          }
-
-
+        if(result.success)
+        {
+          this.snackBarRef.open("Message Published successfully", "Close",{
+            duration: 3000,
+          });
         }
-
-        if (result.action == "edit") {
-          this.pins[result.index].data = result.data;
-          this.changed = true;
-        }
-
       }
 
     });
@@ -191,7 +165,9 @@ export class ClientFloorplanComponent implements OnInit {
       width: '450px',
       data: {
         index: index,
-        area: this.polygons[index].data
+        area: this.polygons[index].data,
+        projectId: this.projectID,
+        floorplanId: this.floorplanId
       }
     });
 
@@ -199,7 +175,12 @@ export class ClientFloorplanComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
 
       if (result) {
-        this.polygons[result.index].data = result.data.area;
+        if(result.success)
+        {
+          this.snackBarRef.open("Message Published successfully", "Close",{
+            duration: 3000,
+          });
+        }
       }
 
       //this.contentAreaChangeList.push(this.polygons[index]);

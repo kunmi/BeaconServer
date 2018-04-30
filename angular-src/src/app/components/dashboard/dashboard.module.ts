@@ -27,6 +27,8 @@ import {DialogFloorPlanNameComponent} from "./admin/dash-floorplan/dialog-floorp
 import {DialogContentAreaNameComponent} from "./admin/dash-floorplan/dialog-contentarea-name.component";
 import {ClientFloorplanComponent} from "./client/floorplan/floorplan.component";
 import {DialogAddContentComponent} from "./client/floorplan/dialog-add-content.component";
+import {ContentProvider} from "../../services/content.service";
+import { ContentComponent } from './client/content/content.component';
 
 
 @NgModule({
@@ -51,7 +53,8 @@ import {DialogAddContentComponent} from "./client/floorplan/dialog-add-content.c
     DialogFloorPlanNameComponent,
     DialogContentAreaNameComponent,
     ClientFloorplanComponent,
-    DialogAddContentComponent
+    DialogAddContentComponent,
+    ContentComponent
   ],
   entryComponents:[
     YesNoDialogComponent,
@@ -70,7 +73,7 @@ import {DialogAddContentComponent} from "./client/floorplan/dialog-add-content.c
     HttpClientModule,
     SharedMaterialModule
   ],
-  providers: [UserProvider, ProjectProvider, FloorplanProvider]
+  providers: [UserProvider, ProjectProvider, FloorplanProvider, ContentProvider]
 })
 
 

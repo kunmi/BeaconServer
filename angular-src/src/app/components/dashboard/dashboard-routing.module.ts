@@ -9,6 +9,7 @@ import {DashProjectHomeComponent} from "./admin/dash-project-detail/dash-project
 import {DashFloorplanComponent} from "./admin/dash-floorplan/dash-floorplan.component";
 import {ClientFloorplanComponent} from "./client/floorplan/floorplan.component";
 import {ProfileComponent} from "./client/profile/profile.component";
+import {ContentComponent} from "./client/content/content.component";
 
 const dashRoutes: Routes = [
 
@@ -26,7 +27,7 @@ const dashRoutes: Routes = [
           {path: '', redirectTo: 'home', pathMatch: 'full'},
           {path: 'home', component: DashOverviewComponent},
           {path: 'floorplan/:floorplanId', component: ClientFloorplanComponent},
-          {path: 'contents/:id', component: DashUsersComponent}
+          {path: 'contents/:id', component: ContentComponent}
 
         ]},
 

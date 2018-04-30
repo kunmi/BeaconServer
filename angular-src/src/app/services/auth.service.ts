@@ -49,7 +49,7 @@ export class AuthService {
     this.loadToken();
     headers = headers.append('Authorization', this.authToken);
     headers = headers.append('Content-Type', 'application/json');
-    return this.http.get<ProfileResultData>('http://localhost:3000/users/profile', {headers: headers})
+    return this.http.get<any>('http://localhost:3000/users/profile', {headers: headers})
       .map(res => res);
   }
 
@@ -83,5 +83,6 @@ export interface AuthenticateResultData{
 
 export interface ProfileResultData {
   user: any;
+
 }
 

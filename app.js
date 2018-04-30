@@ -33,9 +33,6 @@ mongoose.connection.on('error', (err) => {
 
 const app = express();
 
-const users = require('./routes/users');
-const projects = require('./routes/projects');
-const floorPlan = require('./routes/floorplan');
 
 
 // PORT NUMER
@@ -65,9 +62,16 @@ require('./config/passport')(passport);
 
 
 //ROUTE LINK
+
+const users = require('./routes/users');
+const projects = require('./routes/projects');
+const floorPlan = require('./routes/floorplan');
+const content = require('./routes/content');
+
 app.use('/users',users);
 app.use('/projects', projects);
 app.use('/floorplan', floorPlan);
+app.use('/content', content);
 
 //INDEX ROUT
 app.get('/', (req,res) => {
