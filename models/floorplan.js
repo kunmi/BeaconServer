@@ -17,7 +17,6 @@ const FloorPlanSchema = module.exports = mongoose.Schema({
         type: String,
         required : true
     },
-    created : Date,
     uploadedBy:
     {
             type: mongoose.Schema.Types.ObjectId,
@@ -27,7 +26,19 @@ const FloorPlanSchema = module.exports = mongoose.Schema({
     mimeType: String,
     path: String,
     beacons: [BeaconPlanSchema],
-    areas: [ContentAreaSchema]
+    areas: [ContentAreaSchema],
+
+    created : {
+        type: Date,
+        default: Date.now()
+    },
+
+    updated : {
+        type: Date,
+        default: Date.now()
+    }
+
+
 });
 
 

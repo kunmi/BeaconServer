@@ -1,10 +1,13 @@
 <main class="container">
 
   <mat-card style="min-height: 700px">
-    <h1 style="align-content: center; " class="text-center"><img #icon src="../../../../../assets/beacon-icon.png"
-                                                                 style="width: 50px; height: 50px"/> {{floorplan.name}}
+
+    <h1 style="align-content: center; " class="text-center"> {{floorplan.name}}
     </h1>
 
+    <p>iBeacon -> <img #icon src="../../../assets/beacon_icon.png"
+                       style="width: 30px; height: 30px"/>  EddyStone -> <img #icon2 src="../../../assets/beacon_icon2.png"
+                                                                              style="width: 30px; height: 30px"/> </p>
     <br/>
 
     <div style="float: right">
@@ -13,7 +16,7 @@
 
     </div>
     <br/>
-    <div>
+    <div style="margin-top: 10px">
       <img-map #imgMap
                src="{{this.values.getServiceEndPoint()+floorplan.url}}"
                [markers]="pins"

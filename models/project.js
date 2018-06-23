@@ -37,7 +37,15 @@ const ProjectSchema =mongoose.Schema({
             token: String }
         ]
     ,
-    floorPlans : [FloorPlanSchema]
+    floorPlans : [FloorPlanSchema],
+    created: {
+        type: Date,
+        default: Date.now()
+    },
+    updated : {
+        type: Date,
+        default: Date.now()
+    }
 });
 
 const Project = module.exports = mongoose.model('Project', ProjectSchema );
@@ -300,6 +308,60 @@ module.exports.deleteBeaconFromFloorPlan = function (floorPlanId, projectId, bea
             }
             else {
                 callback(null);
+            }
+
+        });
+
+    });
+
+};
+
+module.exports.updateBeaconInFloorPlan = function(floorPlanId, projectId, beacon, callback){
+
+    Project.findOne(projectId, (err,project)=>{
+
+        const floorPlan = project.floorPlans.id(floorPlanId);
+
+        let beaconId = ObjectId(beacon._id);
+
+        let b = floorPlan.beacons.id(beaconId);
+        b.ref = beacon.ref;
+        b.txPower = beacon.txPower;
+        b.lastSeen = Date.now();
+        b.updated = Date.now();
+
+        if(beacon.telemetry)
+            b.telemetry = beacon.telemetry
+        else
+            b.telemetry = "";
+
+        b.type = beacon.type;
+
+        if(beacon.type.toLowerCase() === "iBeacon".toLowerCase())
+        {
+
+            b.uuid = beacon.uuid;
+            b.major = beacon.major;
+            b.minor = beacon.minor;
+        }
+
+        else
+        {
+            b.type = beacon.type;
+            b.nameSpaceId = beacon.nameSpaceId;
+            b.instanceId = beacon.instanceId;
+            b.frameType = beacon.frameType;
+        }
+
+
+        project.save((err) => {
+            if(err)
+            {
+                console.log(err.message);
+                callback(err, null);
+            }
+            else {
+                callback(null,b);
             }
 
         });

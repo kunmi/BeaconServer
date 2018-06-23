@@ -14,7 +14,8 @@ const BeaconSchema = module.exports = mongoose.Schema({
             type: Number
         },
     txPower: {
-            type: String
+            type: String,
+            default: ""
         },
     telemetry: {
             type: String,
@@ -27,6 +28,10 @@ const BeaconSchema = module.exports = mongoose.Schema({
         },
     lastSeen: {
         type: Date
+    },
+    updated: {
+        type: Date,
+        default: Date.now()
     }
 }, options);
 
@@ -50,7 +55,6 @@ const iBeaconSchema = module.exports =  mongoose.Schema(
 
 const eddystoneSchema = mongoose.Schema(
     {
-
             frameType: {
                 type: String,
                 enum: ["UID", "EID"],
@@ -64,7 +68,11 @@ const eddystoneSchema = mongoose.Schema(
             instanceId:{
                 type: String,
                 required: false
-            }
+            },
+        telemetry:{
+                type: String,
+                required: false
+        }
 
     }, options);
 

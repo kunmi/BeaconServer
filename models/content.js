@@ -27,8 +27,13 @@ const ContentSchema = mongoose.Schema({
     by: {
         type: mongoose.Schema.Types.ObjectId,
     },
-    beacons: [{ beacon_id: mongoose.Schema.Types.ObjectId }],
-    areas: [{ area_id:  mongoose.Schema.Types.ObjectId}]
+    beacons: [mongoose.Schema.Types.ObjectId],
+    areas: [{ area_id:  mongoose.Schema.Types.ObjectId}],
+    updated: {
+        type: Date,
+        default: Date.now()
+    }
+
 });
 
 
@@ -68,13 +73,14 @@ module.exports.addContentToFloorPlan =  function(floorplanId, projectId, userId,
     c.floorplan_id = floorplanId;
     c.by = userId;
 
-
-
     c.save().then((newC)=>{
+        if(content.beacons)
+        {
+            content.beacons.forEach((b)=>{
+                newC.beacons.push(b);
+            });
+        }
 
-
-        if(content.beacon)
-            newC.beacons.push(content.beacon._id);
         if(content.area)
             newC.areas.push(content.area._id);
 

@@ -40,6 +40,9 @@ export class ClientFloorplanComponent implements OnInit {
   @ViewChild('icon')
   icon: ElementRef;
 
+  @ViewChild('icon2')
+  icon2: ElementRef;
+
 
   constructor(private router: Router,
               private activeRouter: ActivatedRoute,
@@ -91,7 +94,17 @@ export class ClientFloorplanComponent implements OnInit {
                   let m: Marker = new Marker(b.map.x, b.map.y);
                   m.size = 20;
                   m.data = b;
-                  m.setAsComposite(this.icon.nativeElement, ShapeType.Circle, 30, 30);
+
+                  let icon = "";
+
+                  if(b.type.toLowerCase() === "iBeacon".toLowerCase())
+                    icon = this.icon.nativeElement;
+                  else
+                    icon = this.icon2.nativeElement;
+
+
+
+                    m.setAsComposite(icon, ShapeType.Circle, 30, 30);
                   this.pins.push(m);
 
                 }

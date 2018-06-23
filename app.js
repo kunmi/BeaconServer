@@ -67,11 +67,14 @@ const users = require('./routes/users');
 const projects = require('./routes/projects');
 const floorPlan = require('./routes/floorplan');
 const content = require('./routes/content');
+const api = require('./routes/api');
 
 app.use('/users',users);
 app.use('/projects', projects);
 app.use('/floorplan', floorPlan);
 app.use('/content', content);
+
+app.use('/api', api);
 
 //INDEX ROUT
 app.get('/', (req,res) => {
@@ -91,6 +94,5 @@ app.get('*', (req,res) => {
 
 //START SERVER
 app.listen(port, () => {
-
     console.log("Server started on port " +port);
 });

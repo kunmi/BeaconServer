@@ -45,6 +45,9 @@ export class DashFloorplanComponent implements OnInit {
   @ViewChild('icon')
   icon: ElementRef;
 
+  @ViewChild('icon2')
+  icon2: ElementRef;
+
 
   //floorplanContext: ImgMapComponent;
   deleteDialogData: YesNoDialogData = {
@@ -84,42 +87,7 @@ export class DashFloorplanComponent implements OnInit {
             this.router.navigate(["../"], {relativeTo: this.activeRouter.parent});
           }
 
-          this.activeRouter.params.subscribe(params => {
 
-            this.floorplanId = params['floorplanid'];
-            this.projectID = params['projectid'];
-            this.floorService.getFloorPlan(params['floorplanid'], params['projectid']).subscribe(data => {
-              if (data) {
-                this.presentProject = data.data.project;
-                this.floorplan = data.data.floorplan;
-
-                for (let i = 0; i < this.floorplan.beacons.length; i++) {
-                  let b = this.floorplan.beacons[i];
-                  let m: Marker = new Marker(b.map.x, b.map.y);
-                  m.size = 20;
-                  m.data = b;
-                  m.setAsComposite(this.icon.nativeElement, ShapeType.Circle, 30, 30);
-                  this.pins.push(m);
-//                  this.floorplanContext.addMarker(m);
-                }
-
-                for(let i=0; i< this.floorplan.areas.length; i++)
-                {
-                  let area = this.floorplan.areas[i];
-                  let p: Polygon = new Polygon();
-                  p.setVertices(area.coordinates);
-                  p.data = area;
-                  this.polygons.push(p);
-                }
-
-
-              }
-              else {
-
-              }
-            })
-
-          });
 
         }
       }
@@ -129,6 +97,59 @@ export class DashFloorplanComponent implements OnInit {
 
 
     });
+  }
+
+  ngAfterViewInit() {
+
+    this.activeRouter.params.subscribe(params => {
+
+      this.floorplanId = params['floorplanid'];
+      this.projectID = params['projectid'];
+      this.floorService.getFloorPlan(params['floorplanid'], params['projectid']).subscribe(data => {
+        if (data) {
+
+          this.presentProject = data.data.project;
+          this.floorplan = data.data.floorplan;
+
+          for (let i = 0; i < this.floorplan.beacons.length; i++) {
+            let b = this.floorplan.beacons[i];
+            let m: Marker = new Marker(b.map.x, b.map.y);
+            m.size = 20;
+            m.data = b;
+
+
+            let icon = "";
+
+            if(b.type.toLowerCase() === "iBeacon".toLowerCase())
+              icon = this.icon.nativeElement;
+            else
+              icon = this.icon2.nativeElement;
+            
+            m.setAsComposite(icon, ShapeType.Circle, 30, 30);
+
+            this.pins.push(m);
+//                  this.floorplanContext.addMarker(m);
+          }
+
+          for(let i=0; i< this.floorplan.areas.length; i++)
+          {
+            let area = this.floorplan.areas[i];
+            let p: Polygon = new Polygon();
+            p.setVertices(area.coordinates);
+            p.data = area;
+            this.polygons.push(p);
+          }
+
+
+        }
+        else {
+
+        }
+      })
+
+    });
+
+
   }
 
   floorplanAppeared(context: ImgMapComponent) {

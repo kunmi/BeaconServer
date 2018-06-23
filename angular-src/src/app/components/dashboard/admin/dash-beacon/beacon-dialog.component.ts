@@ -8,6 +8,7 @@ import {Project} from "../../../../models/project";
 import {ProjectProvider} from "../../../../services/project.service";
 import {UserProvider} from "../../../../services/user.service";
 import {Observable} from "rxjs/Observable";
+import {InfoDialogComponent, InfoDialogData} from "../../../util.component";
 
 @Component({
   selector: 'dialog-beacon-add',
@@ -35,7 +36,7 @@ import {Observable} from "rxjs/Observable";
 
             <div *ngIf="model.type == 'iBeacon'">
             <mat-form-field class="input-full-width">
-              <input matInput placeholder="UUID" [(ngModel)]="model.uuid"  name="uuid"  id="uuid" [disabled]="disable_info" required="required" >
+              <input matInput placeholder="UUID" [(ngModel)]="model.uuid"  name="uuid"  id="uuid" [disabled]="disable_info" >
             </mat-form-field>
             <mat-form-field class="input-full-width">
               <input matInput placeholder="Major" [(ngModel)]="model.major"  name="major"  id="major" [disabled]="disable_info" >
@@ -117,9 +118,6 @@ export class BeaconDialogComponent implements OnInit {
               private fb: FormBuilder,
               @Inject(MAT_DIALOG_DATA) public data: any) {
 
-    this.form = this.fb.group({
-      'uuid': new FormControl('', [Validators.required])
-    });
 
 
     this.authService.getProfile().subscribe(result => {
@@ -164,8 +162,21 @@ export class BeaconDialogComponent implements OnInit {
   }
 
   addBeacon(){
-      if((this.model.uuid + "").trim().length > 0)
-      {
+
+    if(this.model.type === "iBeacon")
+    {
+      if((this.model.uuid + "").trim().length <= 0) {
+        this.showBeaconError("UUID ");
+        return;
+      }
+    }
+    else
+    {
+      if((this.model.nameSpaceId + "").trim().length <= 0) {
+        this.showBeaconError("Namespace ");
+        return;
+      }
+    }
 
         if(this.data)
         {
@@ -194,13 +205,27 @@ export class BeaconDialogComponent implements OnInit {
         }
 
 
-      }
+
   }
 
   deleteBeacon(){
     this.dialogRef.close({data: this.data.beacon, action: "delete", index : this.data.index});
   }
 
+
+  showBeaconError(item) {
+    let infoDialogData: InfoDialogData = {
+      message: item + "is required, please provide",
+      title: "Required field",
+      yes: "okay"
+    };
+
+
+    this.dialog.open(InfoDialogComponent, {
+      width: '450px',
+      data: infoDialogData
+    });
+  }
 
 }
 
