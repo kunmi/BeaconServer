@@ -31,7 +31,7 @@ import {DialogFloorPlanNameComponent} from "../../admin/dash-floorplan/dialog-fl
             <textarea matInput placeholder="Message Here" [(ngModel)]="body"  name="body"  id="body" required="required"></textarea>
           </mat-form-field>
           
-          <span>Destination: {{destination}}</span>
+          <span>Destination: <div [innerHTML]="destination"></div></span>
           <br/>
           <br/>
           
@@ -57,7 +57,7 @@ export class DialogAddContentComponent implements OnInit {
   floorplanId = "";
   projectId = "";
 
-  beaconId = null;
+  beacons =[];
   contentAreaId = null;
 
 
@@ -85,18 +85,30 @@ export class DialogAddContentComponent implements OnInit {
       this.projectId = this.data.projectId;
       this.floorplanId = this.data.floorplanId;
 
-      if(this.data.beacon)
-      {
-        this.beaconId = this.data.beacon;
-         if(this.data.beacon.ref)
-           this.destination = "beacon with ref "+ this.data.beacon.ref;
-      }
-      else
-      {
-        this.contentAreaId = this.data.area;
-        if(this.data.area.name)
-          this.destination = this.data.area.name;
-      }
+        this.beacons = this.data.beacons;
+
+        this.destination = '<br/>' +'Beacons with references: ';
+        for(let i=0; i< this.beacons.length; i++)
+        {
+          let b = this.beacons[i];
+          if(b.ref)
+          {
+            this.destination+= `<b> ${b.ref} </b>`;
+            if(i<this.beacons.length-1)
+            {
+              this.destination+= ` , ` ;
+            }
+          }
+        }
+
+        if(this.data.area)
+        {
+          this.contentAreaId = this.data.area;
+          if(this.data.area.name)
+            this.destination+=  `<br/> Content-Area Name: <b> ${this.data.area.name} </b>`;
+
+        }
+
 
     }
 
@@ -112,13 +124,15 @@ export class DialogAddContentComponent implements OnInit {
    let content: any = this.data.content = {
       title : this.title,
       body : this.body,
+      beacons : []
     };
 
-    if(this.beaconId)
-    {
-      content.beacon = this.beaconId;
-    }
-    else if(this.contentAreaId)
+   for(let i=0; i<this.beacons.length; i++)
+   {
+     content.beacons.push(this.beacons[i]._id);
+   }
+
+    if(this.contentAreaId)
     {
       content.area = this.contentAreaId;
     }

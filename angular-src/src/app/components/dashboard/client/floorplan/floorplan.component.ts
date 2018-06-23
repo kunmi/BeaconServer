@@ -147,10 +147,15 @@ export class ClientFloorplanComponent implements OnInit {
 
   showBeaconDetails(index) {
 
+
+    let beacons = [];
+
+    beacons.push(this.pins[index].data);
+
     let dialogRef = this.dialog.open(DialogAddContentComponent, {
       width: '450px',
       data: {
-        beacon: this.pins[index].data,
+        beacons: beacons,
         index: index,
         projectId: this.projectID,
         floorplanId: this.floorplanId}
@@ -172,7 +177,23 @@ export class ClientFloorplanComponent implements OnInit {
   }
 
   showPolygonDetails(index){
+
     this.changed = true;
+
+    let p = this.polygons[index];
+    let beacons = [];
+
+    for(let i=0; i< this.pins.length; i++){
+
+      let b = this.pins[i];
+
+      let coords = [b.x,b.y];
+      if(p.isPointInPolygon(coords))
+      {
+        beacons.push(b.data);
+      }
+
+    }
 
     let dialogRef = this.dialog.open(DialogAddContentComponent, {
       width: '450px',
@@ -180,7 +201,8 @@ export class ClientFloorplanComponent implements OnInit {
         index: index,
         area: this.polygons[index].data,
         projectId: this.projectID,
-        floorplanId: this.floorplanId
+        floorplanId: this.floorplanId,
+        beacons: beacons
       }
     });
 
