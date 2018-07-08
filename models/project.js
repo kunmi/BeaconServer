@@ -11,7 +11,6 @@ const FloorPlanSchema =  mongoose.model('FloorPlan').schema;
 const  Beacon = require("./beacon");
 const ContentArea = require("./contentarea");
 
-
 //Project Schema
 const ProjectSchema =mongoose.Schema({
 
@@ -370,7 +369,16 @@ module.exports.updateBeaconInFloorPlan = function(floorPlanId, projectId, beacon
 
 };
 
+
+
+
 /**  FRONT END  **/
 module.exports.getAllProjectForUser = (userId,callback)=>{
     Project.find({'users.user_id' : userId},callback);
+};
+
+
+/**          SDK             **/
+module.exports.getProjectForToken = (apiToken,callback)=>{
+    Project.find({'users.token' : apiToken},callback);
 };
