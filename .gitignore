@@ -41,5 +41,7 @@ Thumbs.db
 .idea
 /DB/diagnostic.data/metrics.interim
 .idea/workspace.xml
+/DB
+/DB/*
 
 
