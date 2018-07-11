@@ -595,6 +595,7 @@ module.exports.sendPushForProject = function(project_id, type, callback=null){
                         }
                         else {
                             callback(null);
+                            //ToDO
                         }
                     });
 
