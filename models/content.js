@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const dbconfig = require('../config/db');
 var ObjectId = require('mongodb').ObjectID;
+const Project = require('./project');
+
 
 
 
@@ -84,7 +86,10 @@ module.exports.addContentToFloorPlan =  function(floorplanId, projectId, userId,
         if(content.area)
             newC.areas.push(content.area._id);
 
-        newC.save().then(callback(null, newC)).
+        newC.save().then( (newC)=> {
+                callback(null, newC);
+                Project.sendPushForProject(projectId, 3);
+            }).
         catch(err=>{callback(err,null)});
 
     }).catch(err=>{

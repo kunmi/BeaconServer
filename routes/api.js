@@ -178,6 +178,7 @@ router.post('/upload/:projectId/:floorplanId', passport.authenticate('jwt', {ses
 
                             res.send({success: true, beacons: floorplan.beacons});
 
+
                         });
 
                 }
@@ -248,6 +249,7 @@ router.post('/sendmessage/:projectId/:floorplanId', passport.authenticate('jwt',
             }
             else {
                 res.send({success: true});
+
             }
 
         });
@@ -288,9 +290,10 @@ router.post('/sdk/update', (req, res) => {
                 let data = {
                     beacons: [],
                     contents: [],
-                    beacon_update_tag: "",
-                    content_update_tag: ""
+                    beacon_update_tag: beacon_update,
+                    content_update_tag: content_update
                 };
+
 
 
                 if(projects.length > 0)
@@ -375,7 +378,7 @@ router.post('/sdk/push', (req, res) => {
     let fcm = req.body.fcm;
 
     if (token === "") {
-        res.send({success: false, msg: "no fcm token"});
+        res.send({success: false, msg: "invalid project token"});
     }
     else {
         Project.getProjectForToken(token, (err, projects) => {
@@ -396,6 +399,30 @@ router.post('/sdk/push', (req, res) => {
                 });
 
             }
+
+        });
+    }
+});
+
+
+router.post('/sdk/beaconseen', (req, res) => {
+
+    let token = req.body.token;
+    let beacon_id = req.body.beacon_id;
+
+    let telemetry = req.body.telemetry;
+
+    if (!token || token === "") {
+        res.send({success: false, msg: "invalid project token"});
+    }
+    else {
+        Project.updateBeaconSeenInFloorplan(token, ObjectId(beacon_id), telemetry, (err) => {
+
+            if(err)
+                res.send({success: false, msg: err.message});
+            else
+                res.send({success: true});
+
 
         });
     }

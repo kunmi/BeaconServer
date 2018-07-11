@@ -22,6 +22,12 @@ const ProjectTokenSchema =mongoose.Schema({
                 type: String,
                 unique: true
             }
+    ],
+    admin_Tokens: [
+        {
+            type: String,
+            unique: true
+        }
     ]
 });
 
@@ -80,3 +86,5 @@ module.exports.insertTokenForProject = (projectId,apiToken,callback)=>{
     });
 
 };
+
+

@@ -38,6 +38,7 @@ export class DashOverviewComponent implements OnInit {
           this.presentUser = result.user;
           this.activeRouter.params.subscribe(params => {
 
+            /*
             this.projectProvider.getProject(params['id']).subscribe(data => {
               this.presentProject = data.project;
 
@@ -54,7 +55,7 @@ export class DashOverviewComponent implements OnInit {
                 this.router.navigate(["../"], {relativeTo: this.activeRouter.parent});
               }
 
-            });
+            }); */
 
           });
 

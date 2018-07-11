@@ -11,6 +11,10 @@ const FloorPlanSchema =  mongoose.model('FloorPlan').schema;
 const  Beacon = require("./beacon");
 const ContentArea = require("./contentarea");
 
+const ProjectToken = require('./projectokens');
+
+var request = require('request');
+
 //Project Schema
 const ProjectSchema =mongoose.Schema({
 
@@ -22,6 +26,12 @@ const ProjectSchema =mongoose.Schema({
     },
     description : {
         type: String
+    },
+    push: {
+        gcm: {
+            type: String,
+            default: ""
+        }
     },
     token: {
         type: String
@@ -63,11 +73,32 @@ module.exports.addProject = function (newProj, callback) {
 };
 
 module.exports.updateProject = function (id,query, callback){
-    Project.findOneAndUpdate({_id: id}, query, {upsert: true},callback);
+    Project.findOneAndUpdate({_id: id}, query, {upsert: true},(err)=>{
+
+        if(err)
+            callback(err, null);
+        else
+        {
+            callback(null);
+            Project.sendPushForProject(id, 1);
+        }
+
+    });
 };
 
 module.exports.deleteProject = function (id, callback) {
-    Project.findByIdAndRemove(id, {}, callback);
+    Project.findByIdAndRemove(id, {}, err => {
+
+        if(err)
+            callback(err);
+
+        else
+        {
+            callback(null);
+            Project.sendPushForProject(id, 1);
+        }
+
+    });
 };
 
 module.exports.getAllProject = (callback)=>{
@@ -91,6 +122,7 @@ module.exports.addUserToProject =  function(id, user, callback){
         }
     }).then((raw) => {
         callback(null,raw.nModified);
+        Project.sendPushForProject(id, 1);
     }).catch(error=>{
             callback(error, null);
     });
@@ -112,6 +144,7 @@ module.exports.removeUserFromProject =  function(id, user, callback){
         }
     }).then((raw) => {
         callback(null,raw.nModified);
+        Project.sendPushForProject(id, 1);
     }).catch(error=>{
         callback(error, null);
     });
@@ -138,6 +171,7 @@ module.exports.addImageToProject = function (id, files, userId, callback) {
         }
     }).then((raw) => {
         callback(null,raw.nModified);
+        Project.sendPushForProject(id, 1);
     }).catch(error=>{
         callback(error, null);
     });
@@ -148,6 +182,9 @@ module.exports.addImageToProject = function (id, files, userId, callback) {
 module.exports.getFloorPlanFromProject = function (floorPlanId, projectId, callback) {
     Project.findById(projectId).then((project) => {
         callback(null,project,project.floorPlans.id(floorPlanId));
+        Project.sendPushForProject(projectId, 2);
+
+
     }).catch(error =>{
         callback(error, null);
     });
@@ -161,6 +198,7 @@ module.exports.saveFloorPlanName = function (id, projectId, name, callback) {
         .then((raw) =>
             {
                 callback(null,raw.nModified);
+                Project.sendPushForProject(id, 1);
             })
         .catch(error=>{
             callback(error, null);
@@ -286,6 +324,51 @@ module.exports.saveBeaconsIntoFloorPlan = function (floorPlanId, projectId, item
             }
             else {
                  callback(null);
+                 Project.sendPushForProject(projectId, 2);
+            }
+
+        });
+
+    });
+
+};
+
+module.exports.deleteFloorplanWithId = function (floorPlanId, projectId, callback) {
+    Project.findOne(projectId, (err,project)=>{
+
+        const floorPlan = project.floorPlans.id(floorPlanId).remove();
+        project.save((err) => {
+            if(err)
+            {
+                //console.log(err.message);
+                callback(err);
+            }
+            else {
+                callback(null);
+                Project.sendPushForProject(projectId, 1);
+
+            }
+
+        });
+
+    });
+
+};
+
+module.exports.deleteBeaconFromFloorPlan = function (floorPlanId, projectId, beaconId, callback) {
+    Project.findOne(projectId, (err,project)=>{
+
+        const floorPlan = project.floorPlans.id(floorPlanId);
+        floorPlan.beacons.id(beaconId).remove();
+        project.save((err) => {
+            if(err)
+            {
+                console.log(err.message);
+                callback(err);
+            }
+            else {
+                callback(null);
+                Project.sendPushForProject(projectId, 2);
             }
 
         });
@@ -361,6 +444,7 @@ module.exports.updateBeaconInFloorPlan = function(floorPlanId, projectId, beacon
             }
             else {
                 callback(null,b);
+                Project.sendPushForProject(projectId, 2);
             }
 
         });
@@ -370,7 +454,26 @@ module.exports.updateBeaconInFloorPlan = function(floorPlanId, projectId, beacon
 };
 
 
+module.exports.updateGCMToken = (project_id, gcmkey, callback) =>{
 
+    Project.findById(project_id, (err, project)=>{
+
+        if(err)
+            callback(err);
+        else{
+            project.push.gcm = gcmkey;
+            project.save((err)=>{
+
+                if(err)
+                    callback(err);
+                else
+                    callback(null);
+
+            });
+        }
+    });
+
+};
 
 /**  FRONT END  **/
 module.exports.getAllProjectForUser = (userId,callback)=>{
@@ -381,4 +484,125 @@ module.exports.getAllProjectForUser = (userId,callback)=>{
 /**          SDK             **/
 module.exports.getProjectForToken = (apiToken,callback)=>{
     Project.find({'users.token' : apiToken},callback);
+};
+
+
+module.exports.updateBeaconSeenInFloorplan = function(token, beacon_id,telemetry, callback){
+
+    Project.getProjectForToken(token, (err, projects) =>{
+
+        if(projects.length > 0){
+            let p = projects[0];
+
+            let b = null;
+
+            for(let i=0; i< p.floorPlans.length; i++){
+                 b = p.floorPlans[i].beacons.id(beacon_id);
+
+                if(b){
+                    break;
+                }
+
+            }
+
+            if(b){
+                b.lastSeen = Date.now();
+                if(b.type !== "iBeacon"){
+                    b.telemetry = telemetry;
+                }
+                p.save((err)=>{
+                    if(err)
+                        callback(err);
+                    else
+                        callback(null);
+                });
+
+            }
+            else
+            {
+                callback({message: "beacon not seen"})
+            }
+
+
+        }
+        else {
+            callback(err);
+        }
+
+
+    });
+
+
+
+};
+
+/** PUSH **/
+
+
+module.exports.sendPushForProject = function(project_id, type, callback=null){
+
+    if(!callback)
+        callback = (err)=>{};
+
+    Project.findById(project_id, (err, project)=>{
+
+        if(err)
+            callback(err);
+        else
+        {
+
+            ProjectToken.getAllTokensForProject(project_id, (err, tokens)=>{
+
+                if(err){
+                    if(callback)
+                    callback(err);
+                }
+                else
+                {
+                    //Type 1 - Project update
+                    //Type 2 - Beacon Update
+                    // Type 3 - Content Update
+
+                    let serverKey = project.push.gcm;
+                    var registrationTokens = tokens;
+
+
+                    request({
+                        url: 'https://fcm.googleapis.com/fcm/send',
+                        method: 'POST',
+                        headers: {
+                            'Content-Type' :' application/json',
+                            'Authorization': 'key='+serverKey
+                        },
+                        body: JSON.stringify(
+                            { "data": {
+                                    "type": type
+                                },
+                                "registration_ids" : registrationTokens,
+                                "android": {
+                                    "priority": "high"
+                                },
+                                "time_to_live": 10
+                            }
+                        )
+                    }, function(error, response, body) {
+                        if (error) {
+                            callback(err);
+//                            console.error(error, response, body);
+                        }
+                        else if (response.statusCode >= 400) {
+                            callback({message: 'HTTP Error: '+response.statusCode+' - '+response.statusMessage+'\n'+body});
+                        }
+                        else {
+                            callback(null);
+                        }
+                    });
+
+                }
+
+            });
+        }
+
+    });
+
 };

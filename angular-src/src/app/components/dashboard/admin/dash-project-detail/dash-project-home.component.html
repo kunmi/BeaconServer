@@ -34,7 +34,7 @@
 
         <p>If you wish to add a new user to this project, you can search for them using below input field.</p>
 
-        <mat-form-field >
+        <mat-form-field style="width: 500px">
           <input type="text" placeholder="Search for username" aria-label="Number" matInput [formControl]="myControl" [matAutocomplete]="auto"
                  >
           <mat-autocomplete #auto="matAutocomplete" [displayWith] = "displayFn">
@@ -98,17 +98,21 @@
 
   <mat-card class="container">
     <div>
-      <h4>Messages / Contents</h4>
-      <p>The following users can assign content to {{title}}</p>
+      <h4>Push Settings</h4>
+      <p>provide your Push and APNS details here, to enable push updates</p>
       <br>
-      <br>
-      <mat-chip-list>
-        <mat-chip>Papadum</mat-chip>
-        <mat-chip>Naan</mat-chip>
-        <mat-chip>Dal</mat-chip>
-      </mat-chip-list>
+      <form >
+        <mat-form-field class="example-full-width" style="width: 650px;">
+          <textarea matInput placeholder="Google GCM" [formControl]="gcmControl"></textarea>
+        </mat-form-field>
 
+        <br/>
+
+        <button mat-raised-button color="primary" (click)="saveGCMKey()">Save</button>
+
+      </form>
     </div>
+    <br>
   </mat-card>
 
 

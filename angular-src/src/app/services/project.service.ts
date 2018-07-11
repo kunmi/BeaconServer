@@ -102,6 +102,17 @@ export class ProjectProvider{
     .map(res => res);
   }
 
+  saveGCM(projectId, gcmKey)
+  {
+    let headers = new HttpHeaders();
+    this.authService.loadToken();
+    headers = headers.append('Authorization', this.authService.authToken);
+    headers.append('Content-Type', 'application/json');
+
+    return this.http.patch<any>(this.values.getServiceEndPoint()+'projects/'+projectId+'/gcm', {gcm: gcmKey},{headers: headers})
+      .map(res => res);
+  }
+
   //FRONT END
   getProjectsForUser(userId){
     let headers = new HttpHeaders();

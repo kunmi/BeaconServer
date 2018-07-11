@@ -27,12 +27,14 @@ const BeaconSchema = module.exports = mongoose.Schema({
             ref : User
         },
     lastSeen: {
-        type: Date
+        type: Date,
+        default: Date.now()
     },
     updated: {
         type: Date,
         default: Date.now()
-    }
+    },
+
 }, options);
 
 

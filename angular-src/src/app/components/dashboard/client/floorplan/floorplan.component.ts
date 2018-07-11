@@ -153,7 +153,7 @@ export class ClientFloorplanComponent implements OnInit {
     beacons.push(this.pins[index].data);
 
     let dialogRef = this.dialog.open(DialogAddContentComponent, {
-      width: '450px',
+      width: '650px',
       data: {
         beacons: beacons,
         index: index,
@@ -196,7 +196,7 @@ export class ClientFloorplanComponent implements OnInit {
     }
 
     let dialogRef = this.dialog.open(DialogAddContentComponent, {
-      width: '450px',
+      width: '650px',
       data: {
         index: index,
         area: this.polygons[index].data,

@@ -99,7 +99,7 @@ router.get('/:id', passport.authenticate('jwt', {session:false}), (req, res, nex
 
             if(err)
             {
-                console.error(err);
+                //console.error(err);
                 res.send({success: false, msg: err.message});
             }
             else
@@ -153,8 +153,46 @@ router.patch('/:id', passport.authenticate('jwt', {session:false}), (req, res, n
                     else
                     {
                         res.send({success: true, project: project});
+
                     }
                 });
+        }
+        else
+        {
+            res.send({success: false, msg: "Not Permitted"});
+        }
+    }
+
+    else{
+        res.send(401);
+    }
+
+});
+
+// Store GCM Server Key
+router.patch('/:id/gcm', passport.authenticate('jwt', {session:false}), (req, res, next) => {
+
+    let presentUser = req.user;
+
+    if(presentUser)
+    {
+        if(presentUser.isadmin && presentUser.roles.manage_projects)
+        {
+            let project_id = req.params.id;
+             let  gcm = req.body.gcm;
+
+            Project.updateGCMToken(ObjectId(project_id), gcm, (err)=>{
+
+                if(err)
+                {
+                    console.log(err.message);
+                    res.send({success: false, msg: err.message});
+                }
+                else {
+                    res.send({success: true});
+                }
+
+            });
         }
         else
         {
@@ -187,6 +225,7 @@ router.delete('/:id', passport.authenticate('jwt', {session:false}), (req, res, 
                 else
                 {
                     res.send({success: true});
+
                 }
             });
         }
@@ -241,7 +280,6 @@ router.post('/:id/adduser', passport.authenticate('jwt', {session:false}), (req,
                                         else
                                         {
                                             res.send({success: true, users : project.users});
-
                                         }
                                     });
 
@@ -306,6 +344,7 @@ router.post('/:id/removeuser', passport.authenticate('jwt', {session:false}), (r
                             if(nmods>0)
                             {
                                 res.send({success: true});
+
 
                                 /* EXTRA DB call not needed
                                 Project.getProjectByID(projectId, (err, project)=>{
@@ -429,6 +468,7 @@ router.post('/:id/upload', passport.authenticate('jwt', {session:false}), (req, 
                                     if(nmods>0)
                                     {
                                         res.send({success: true});
+
 
                                     }
                                     else

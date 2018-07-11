@@ -42,6 +42,7 @@ export class DashProjectHomeComponent implements OnInit {
   users: User[] = [];
   filteredOptions: Observable<User[]>;
   myControl: FormControl = new FormControl();
+  gcmControl: FormControl = new FormControl();
 
   constructor(private authservice: AuthService,
               private projectProvider: ProjectProvider,
@@ -51,7 +52,7 @@ export class DashProjectHomeComponent implements OnInit {
               public dialog: MatDialog,
               private flashMessagesService: FlashMessagesService,
               public snackBarRef: MatSnackBar,
-              private values: Values) {
+              private values: Values,) {
 
     authservice.getProfile().subscribe(result => {
       if (result) {
@@ -71,6 +72,10 @@ export class DashProjectHomeComponent implements OnInit {
               this.email = this.presentProject.email;
 
               this.images = this.presentProject.floorPlans;
+
+              if(this.presentProject.push){
+                this.gcmControl.setValue(this.presentProject.push.gcm);
+              }
 
               this.buildData(data.project.users);
 
@@ -301,4 +306,20 @@ export class DashProjectHomeComponent implements OnInit {
   this.router.navigate(['../', this.presentProject._id, "floorplan", id], {relativeTo : this.activeRouter});
   }
 
+
+  saveGCMKey(){
+  this.projectProvider.saveGCM(this.presentProject._id, this.gcmControl.value).subscribe(result=> {
+      if(result.success)
+      {
+        this.snackBarRef.open("GCM saved", "Close", {
+          duration: 3000,
+        });
+      }
+      else
+      {
+        this.flashMessagesService.show("Error Occured "+ result.msg,
+          {cssClass: 'alert-warning', timeout: 3000});
+      }
+  });
+  }
 }

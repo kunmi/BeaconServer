@@ -77,6 +77,7 @@ router.delete('/:id/project/:projectId', passport.authenticate('jwt', {session:f
 
                     let path = floorplan.path;
 
+
                     Project.deleteFloorplanWithId(ObjectId(req.params.id), ObjectId(req.params.projectId) , (err, modified)=>{
                         if(err)
                         {
@@ -92,6 +93,7 @@ router.delete('/:id/project/:projectId', passport.authenticate('jwt', {session:f
                                 }
                             });
                             res.send({success: true});
+
                         }
                     });
 
@@ -174,6 +176,7 @@ router.post('/:id/project/:projectId/name', passport.authenticate('jwt', {sessio
                 else
                 {
                     res.send({success: true});
+
                 }
 
             });
@@ -212,6 +215,7 @@ router.delete('/:id/project/:projectId/beacon/:beaconId', passport.authenticate(
                 else
                 {
                     res.send({success: true});
+
                 }
 
             });

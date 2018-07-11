@@ -68,6 +68,7 @@ router.post('/floorplan/:floorplanId/project/:projectId/', passport.authenticate
                 else
                 {
                     res.send({success: true});
+
                 }
 
             });
