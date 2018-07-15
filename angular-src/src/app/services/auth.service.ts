@@ -4,6 +4,7 @@ import { HttpClientModule, HttpClient, HttpHeaders } from '@angular/common/http'
 import 'rxjs/add/operator/map';
 import {User} from "../models/User";
 import {tokenNotExpired} from 'angular2-jwt';
+import {Values} from "../models/Values";
 
 @Injectable()
 
@@ -12,14 +13,15 @@ export class AuthService {
   authToken: any;
   user: User;
 
-  constructor(private http:HttpClient) {}
+  constructor(private http:HttpClient,
+              private values: Values) {}
 
   authenticateUser(user){
     let headers = new HttpHeaders();
     //this.loadToken();
     //headers = headers.append('authorization', this.authToken);
     headers = headers.append('Content-Type', 'application/json');
-    return this.http.post<AuthenticateResultData>('http://localhost:3000/users/authenticate', user, {headers: headers})
+    return this.http.post<AuthenticateResultData>(this.values.getServiceEndPoint()+'users/authenticate', user, {headers: headers})
       .map(
         res => res);
   }
@@ -49,7 +51,7 @@ export class AuthService {
     this.loadToken();
     headers = headers.append('Authorization', this.authToken);
     headers = headers.append('Content-Type', 'application/json');
-    return this.http.get<any>('http://localhost:3000/users/profile', {headers: headers})
+    return this.http.get<any>(this.values.getServiceEndPoint()+'users/profile', {headers: headers})
       .map(res => res);
   }
 
