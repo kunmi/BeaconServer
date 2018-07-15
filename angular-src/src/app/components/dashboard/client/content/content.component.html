@@ -1,7 +1,7 @@
 <main class="container">
 
   <div>
-    <h3>Available Users</h3>
+    <h3>Available Contents</h3>
     <br/>
 
 
@@ -45,7 +45,7 @@
 
           <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
           <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{'highlight': selectedRowIndex == row.id}"
-                   >
+                   (dblclick)="showContentDetails(row)"   >
           </mat-row>
 
 

@@ -126,10 +126,17 @@ import {DialogFloorPlanNameComponent} from "../../admin/dash-floorplan/dialog-fl
                 <input matInput placeholder="Number of Beacons " [(ngModel)]="beacons.length"  name="ref"  id="ref" [disabled]="true" >
               </mat-form-field>
 
-              <mat-form-field class="input-full-width">
-                <input matInput placeholder="Beacon Refs: " [(ngModel)]="containedBeacons"  name="ref"  id="ref" [disabled]="true" >
-              </mat-form-field>
-              
+
+              <h4>Beacons:</h4>
+              <div style="max-height: 300px; overflow-y: scroll">
+
+                <ul *ngFor="let b of containedBeacons; let i = index">
+                  <li> <p>{{b}}</p> </li>
+                </ul>
+
+              </div>
+
+
 
 
               <br/>
@@ -191,7 +198,7 @@ export class DialogAddContentComponent implements OnInit {
 
   contentAreaId = null;
   contentAreaName = "Not named - To name please save from admin";
-  containedBeacons = "";
+  containedBeacons = [];
 
 
   disable_info = false;
@@ -224,14 +231,24 @@ export class DialogAddContentComponent implements OnInit {
         for(let i=0; i< this.beacons.length; i++)
         {
           let b = this.beacons[i];
+
+          let s = "";
+
+          if(b.type == "iBeacon"){
+            s+= "UUID:  "+b.uuid+"- Major:  "+b.major+"- Minor:  "+b.minor+", Ref: "+b.ref;
+          }
+          else
+          {
+            s+= "Namespace ID:  "+b.nameSpaceId + "- Instance ID  "+b.instanceId+", Ref: "+b.ref;
+          }
+          this.containedBeacons.push(s);
+
           if(b.ref)
           {
             this.destination+= `<b> ${b.ref} </b>`;
-            this.containedBeacons = `<b> ${b.ref} </b>`;
             if(i<this.beacons.length-1)
             {
               this.destination+= ` , ` ;
-              this.containedBeacons = ` , ` ;
             }
           }
         }

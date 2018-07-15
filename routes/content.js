@@ -180,6 +180,31 @@ router.get('/project/:projectId', passport.authenticate('jwt', {session:false}),
 
 
 
+//GET CONTENT DETAILS
+router.get('/details/:contentId', passport.authenticate('jwt', {session:false}), (req, res, next) => {
+
+    let presentUser = req.user;
+
+    if(presentUser) {
+
+        Content.getContentDetails(ObjectId(req.params.contentId), (err, c)=>{
+
+            if(err)
+                res.send({success: false, msg: err.message});
+            else
+                res.send({success: true, content: c});
+
+        });
+
+    }
+    else
+    {
+        res.send({success: false, msg: 'Not Authorized'});
+    }
+
+});
+
+
 
 
 module.exports = router;

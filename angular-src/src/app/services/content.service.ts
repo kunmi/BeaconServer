@@ -32,6 +32,17 @@ export class ContentProvider {
       .map(res => res);
   }
 
+  getContentDetails(contentId){
+    let headers = new HttpHeaders();
+    this.authService.loadToken();
+    headers = headers.append('Authorization', this.authService.authToken);
+    headers.append('Content-Type', 'application/json');
+    return this.http.get<any>(this.values.getServiceEndPoint()+'content/details/'+contentId,{headers: headers})
+      .map(res => res);
+  }
+
+
+
 
 
 

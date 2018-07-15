@@ -10,6 +10,8 @@ import {AuthService} from "../../../../services/auth.service";
 import {ContentProvider} from "../../../../services/content.service";
 import {Marker, Polygon, ShapeType} from "../../../plugin/ng2-img-map";
 import {UserData} from "../../admin/dash-users/dash-users.component";
+import {BeaconDialogComponent} from "../../admin/dash-beacon/beacon-dialog.component";
+import {DialogViewContentComponent} from "./view-content.component";
 
 @Component({
   selector: 'app-content',
@@ -109,11 +111,16 @@ export class ContentComponent implements OnInit {
     this.selectedRowIndex = row.id;
   }
 
-  showFull(index)
-  {
+  showContentDetails(c) {
+
+
+
+    let dialogRef = this.dialog.open(DialogViewContentComponent, {
+      width: '450px',
+      data: {contentid: c._id, projectId: this.project_id}
+    });
 
   }
-
 
 }
 

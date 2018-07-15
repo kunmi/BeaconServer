@@ -29,6 +29,12 @@ import {ClientFloorplanComponent} from "./client/floorplan/floorplan.component";
 import {DialogAddContentComponent} from "./client/floorplan/dialog-add-content.component";
 import {ContentProvider} from "../../services/content.service";
 import { ContentComponent } from './client/content/content.component';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+import {
+  BarHorizontalStackedComponentExport
+} from "./client/statistics/bar-horizontal-stacked.component";
+import {PieAdvancedComponentExport} from "./client/statistics/pie-chart.component";
+import {DialogViewContentComponent} from "./client/content/view-content.component";
 
 
 @NgModule({
@@ -54,7 +60,10 @@ import { ContentComponent } from './client/content/content.component';
     DialogContentAreaNameComponent,
     ClientFloorplanComponent,
     DialogAddContentComponent,
-    ContentComponent
+    ContentComponent,
+    BarHorizontalStackedComponentExport,
+    PieAdvancedComponentExport,
+    DialogViewContentComponent
   ],
   entryComponents:[
     YesNoDialogComponent,
@@ -64,14 +73,20 @@ import { ContentComponent } from './client/content/content.component';
     BeaconDialogComponent,
     DialogFloorPlanNameComponent,
     DialogContentAreaNameComponent,
-    DialogAddContentComponent],
+    DialogAddContentComponent,
+    BarHorizontalStackedComponentExport,
+    PieAdvancedComponentExport,
+    DialogViewContentComponent
+
+  ],
   imports: [
     DashboardRoutingModule,
    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    SharedMaterialModule
+    SharedMaterialModule,
+    NgxChartsModule
   ],
   providers: [UserProvider, ProjectProvider, FloorplanProvider, ContentProvider]
 })

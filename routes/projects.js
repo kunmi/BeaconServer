@@ -169,6 +169,43 @@ router.patch('/:id', passport.authenticate('jwt', {session:false}), (req, res, n
 
 });
 
+
+router.get('/getprojectid/:id', passport.authenticate('jwt', {session: false}), (req, res, next) => {
+
+    try {
+
+        let presentUser = req.user;
+
+        if (presentUser) {
+
+            Project.getProjectByID(ObjectId(req.params.id), (err, project) => {
+
+                if (err) {
+                    console.error(err, 'Uncaught Exception thrown');
+                    res.send([]);
+                }
+
+                else
+                {
+                    res.send({success: true, project: project});
+                }
+            });
+
+
+        }
+        else {
+            res.send({success: false, msg: 'Not Authorized'});
+        }
+    }
+    catch (e) {
+        console.log(e);
+        res.send(500);
+    }
+
+
+});
+
+
 // Store GCM Server Key
 router.patch('/:id/gcm', passport.authenticate('jwt', {session:false}), (req, res, next) => {
 

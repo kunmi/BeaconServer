@@ -96,10 +96,74 @@ module.exports.addContentToFloorPlan =  function(floorplanId, projectId, userId,
         callback(err, null);
     })
 
+};
+
+
+module.exports.getContentDetails = function (contentId, callback) {
+    Content.findById(contentId, (err, c)=>{
+
+        if(err)
+            callback(err, null);
+        else
+        {
+
+            Project.getProjectByID(c.project_id, (err, p)=>{
+
+
+                let content = {
+                    title: c.title,
+                    body: c.body,
+                    created: c.published,
+                    data: {
+                        beacons: [],
+                        floorplan_name: "",
+                        area: ""
+                    }
+                };
+
+
+                if(err)
+                    callback(err,null);
+                else {
+                    let f = p.floorPlans.id(c.floorplan_id);
+
+                    if(f){
+
+                        content.data.floorplan_name = f.name;
+
+                        c.beacons.forEach(b =>{
+
+                            let beacon = f.beacons.id(b);
+
+                            if(beacon)
+                            {
+                                content.data.beacons.push(beacon);
+                            }
+
+                        });
+
+
+                        if(c.areas[0])
+                        {
+                            let area = f.areas.id(c.areas[0].area_id);
+                            if(area)
+                                content.data.area = area;
+                        }
+                    }
+
+                    callback(null, content);
+                }
+
+
+
+            });
 
 
 
 
+        }
+
+    })
 };
 
 

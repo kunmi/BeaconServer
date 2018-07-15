@@ -62,9 +62,7 @@ const Project = module.exports = mongoose.model('Project', ProjectSchema );
 
 
 module.exports.getProjectByID = function (id, callback) {
-    //
-    // you can select the post without any comments also
-    //db.posts.find({_id: 54}, {comments: -1})
+
     Project.findById(id, callback);
 };
 
