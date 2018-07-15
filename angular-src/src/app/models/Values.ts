@@ -5,7 +5,9 @@ const title: string = "Beacon Framework";
 const year: string = "2017";
 const copyright: string = "Olakunmi Joseph";
 
-const BASE_URL =  "http://localhost:3000/";
+//const BASE_URL =  "http://localhost:3000/";
+//Heroku
+const BASE_URL =  "";
 
 export class Values {
   getTitle(){

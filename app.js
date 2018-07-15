@@ -36,7 +36,11 @@ const app = express();
 
 
 // PORT NUMER
-const port = 3000;
+//const port = 3000;
+//Heroku
+
+const port = process.env.PORT || 8080;
+
 
 
 // CORS INIT
