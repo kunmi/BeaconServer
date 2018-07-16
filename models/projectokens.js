@@ -48,8 +48,12 @@ module.exports.getAllTokensForProject = (projectId,callback)=>{
         }
         else
         {
-            if(projects[0].tokens)
-                callback(null, projects[0].tokens);
+
+            if(projects.length>0)
+            {
+                if(projects[0].tokens)
+                    callback(null, projects[0].tokens);
+            }
             else
                 callback({message: "no tokens exist for this project at the moment"}, null)
         }
