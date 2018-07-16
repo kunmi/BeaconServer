@@ -97,6 +97,14 @@ app.get('*', (req,res) => {
 
 
 //START SERVER
+//HEROKU
+/*
 app.listen(port, () => {
+    console.log("Server started on port " +port);
+});
+*/
+
+//EVENNODE
+app.listen(port,'0.0.0.0' ,() => {
     console.log("Server started on port " +port);
 });
