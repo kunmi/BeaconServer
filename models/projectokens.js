@@ -8,7 +8,6 @@ const FloorPlanSchema =  mongoose.model('FloorPlan').schema;
 
 const uniqueArrayPlugin = require('mongoose-unique-array');
 
-
 //Project Schema
 const ProjectTokenSchema =mongoose.Schema({
 
