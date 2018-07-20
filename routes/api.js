@@ -333,11 +333,11 @@ router.post('/sdk/update', (req, res) => {
 
                                     if(content.updated){
 
-                                        let time = content.created.getTime();
+                                        let time = content.published.getTime();
 
                                         if(time > maxContentTime)
                                         {
-                                            maxContentTime = content.updated.getTime();
+                                            maxContentTime = content.published.getTime();
                                         }
 
 
