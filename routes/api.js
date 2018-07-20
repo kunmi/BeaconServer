@@ -321,12 +321,8 @@ router.post('/sdk/update', (req, res) => {
                                 }
 
                             }
-                        }
-
+                        });
                         data.beacon_update_tag = maxbeaconTime;
-
-                    );
-
 
                         Content.getContentsByProject(ObjectId(project._id), (err, contents) => {
                             if (!err) {
@@ -337,22 +333,23 @@ router.post('/sdk/update', (req, res) => {
 
                                     if(content.updated){
 
-                                        let time = content.created
+                                        let time = content.created.getTime();
 
-                                        if(content.updated.getTime() > maxContentTime)
+                                        if(time > maxContentTime)
                                         {
                                             maxContentTime = content.updated.getTime();
-                                            data.content_update_tag = content.updated.getTime();
                                         }
 
 
-                                        if (content.updated.getTime() > content_update) {
+                                        if (time > content_update) {
                                             data.contents.push(content);
                                         }
                                     }
 
 
                                 });
+
+                                data.content_update_tag = maxContentTime;
                             }
 
 
