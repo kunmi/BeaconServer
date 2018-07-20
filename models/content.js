@@ -67,13 +67,16 @@ module.exports.getContentsByFloorplan = function (floorplanId,projectId, callbac
 // ADD CONTENT TO PROJECT
 module.exports.addContentToFloorPlan =  function(floorplanId, projectId, userId,content, callback){
 
+    let date = Date.now();
+
     let c = new Content();
     c.title = content.title;
     c.body = content.body;
-    c.published = Date.now();
+    c.published = date;
     c.project_id = projectId;
     c.floorplan_id = floorplanId;
     c.by = userId;
+    c.updated = date;
 
     c.save().then((newC)=>{
         if(content.beacons)

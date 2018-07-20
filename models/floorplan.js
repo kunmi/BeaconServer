@@ -50,9 +50,13 @@ const eddystone = FloorPlanSchema.path('beacons').discriminator('eddystone', Bea
 const FloorPlan = module.exports = mongoose.model('FloorPlan', FloorPlanSchema );
 
 module.exports.newFloorPlan = function(file, userID) {
+
+    let d = Date.now();
+
     return new FloorPlan({
         filename: file.filename,
-        created : Date.now(),
+        created : d,
+        updated: d,
         uploadedBy: userID,
         size: file.size,
         mimeType: file.mimetype,
@@ -64,13 +68,17 @@ module.exports.newFloorPlan = function(file, userID) {
 
 
 module.exports.newIbeacon = function(model) {
+
+    let d = Date.now();
+
     return new iBeacon({
             uuid: model.uuid,
             major: model.major,
             minor: model.minor,
         ref: model.ref,
         txPower: model.txPower,
-        created: Date.now(),
+        created: d,
+        updated: d,
         map : {
             x : model.map.x,
             y : model.map.y
@@ -80,13 +88,17 @@ module.exports.newIbeacon = function(model) {
 };
 
 module.exports.newEddystoneBeacon = function(model) {
+
+    let d = Date.now();
+
     return new eddystone({
         nameSpaceId: model.nameSpaceId,
         instanceId: model.instanceId,
         frameType: "UID",
         ref: model.ref,
         txPower: model.txPower,
-        created: Date.now(),
+        created: d,
+        updated: d,
         map : {
             x : model.map.x,
             y : model.map.y

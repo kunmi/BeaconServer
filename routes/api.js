@@ -308,27 +308,36 @@ router.post('/sdk/update', (req, res) => {
                         floorplan.beacons.forEach(beacon => {
 
                             if (beacon.updated) {
-                                if (beacon.updated.getTime() > maxbeaconTime) {
-                                    maxbeaconTime = beacon.updated.getTime();
-                                    data.beacon_update_tag = beacon.updated.getTime();
+
+                                let time = beacon.updated.getTime();
+
+                                if (time > maxbeaconTime) {
+                                    maxbeaconTime = time;
                                 }
 
 
-                                if (beacon.updated.getTime() > beacon_update) {
+                                if (time > beacon_update) {
                                     data.beacons.push(beacon);
                                 }
+
                             }
-                        });
+                        }
+
+                        data.beacon_update_tag = maxbeaconTime;
+
+                    );
 
 
                         Content.getContentsByProject(ObjectId(project._id), (err, contents) => {
                             if (!err) {
 
-                                let maxContentTime =content_update;
+                                let maxContentTime = content_update;
 
                                 contents.forEach(content => {
 
                                     if(content.updated){
+
+                                        let time = content.created
 
                                         if(content.updated.getTime() > maxContentTime)
                                         {
@@ -391,7 +400,9 @@ router.post('/sdk/push', (req, res) => {
 
                 let project = projects[0];
 
-                ProjectToken.insertTokenForProject(ObjectId(project._id), fcm, (err)=>{
+                console.log(projects);
+
+                ProjectToken.insertTokenForProject(project._id, fcm, (err)=>{
                     if(err)
                         res.send({success: false, msg: err.message});
                     else
