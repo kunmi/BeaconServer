@@ -11,7 +11,7 @@ const BeaconSchema = module.exports = mongoose.Schema({
         baseShape: String
     },
     ref: {
-            type: Number
+            type: String
         },
     txPower: {
             type: String,

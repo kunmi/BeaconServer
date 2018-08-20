@@ -38,7 +38,7 @@ import {DashboardModule} from "./components/dashboard/dashboard.module";
     AppRoutingModule,
     DashboardModule,
     BrowserAnimationsModule,
-    ReactiveFormsModule // NOt sure I need this --> for Material
+    ReactiveFormsModule
   ],
   providers: [ValidateService, AuthService, AuthGuard, Values],
   bootstrap: [AppComponent]

@@ -18,8 +18,6 @@ export class AuthService {
 
   authenticateUser(user){
     let headers = new HttpHeaders();
-    //this.loadToken();
-    //headers = headers.append('authorization', this.authToken);
     headers = headers.append('Content-Type', 'application/json');
     return this.http.post<AuthenticateResultData>(this.values.getServiceEndPoint()+'users/authenticate', user, {headers: headers})
       .map(
@@ -29,11 +27,8 @@ export class AuthService {
 
 
   loadToken(){
-
     const token = localStorage.getItem('id_token');
     this.authToken = token;
-
-
   }
 
   loggedIn(){
@@ -57,7 +52,6 @@ export class AuthService {
 
 
   storeUserData(token, user){
-
     localStorage.setItem('id_token', token);
     localStorage.setItem('user', JSON.stringify(user));
     this.authToken = token;

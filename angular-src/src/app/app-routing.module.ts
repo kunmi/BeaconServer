@@ -13,8 +13,7 @@ const appRoutes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'login', component: LoginComponent },
   { path: 'dashboard', loadChildren: 'app/components/dashboard/dashboard.module#DashboardModule'},
-  { path: 'profile', component: ProfileComponent, canActivate:[AuthGuard] },
-  //{ path: '**', component: ProfileComponent }
+  { path: 'profile', component: ProfileComponent, canActivate:[AuthGuard] }
 ];
 
 
