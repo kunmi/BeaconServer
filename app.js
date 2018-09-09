@@ -91,8 +91,10 @@ app.get('/', (req,res) => {
 });
 
 
-app.get('*', (req,res) => {
-    res.redirect('/');
+app.get('*', (req,res, next) => {
+   return res.redirect('/');
+
+   next();
 
 });
 
