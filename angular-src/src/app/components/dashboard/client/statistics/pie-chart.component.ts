@@ -42,9 +42,9 @@ export class  PieAdvancedComponentExport implements OnInit{
   gradient = false;
   showLegend = true;
   showXAxisLabel = true;
-  xAxisLabel = 'Country';
+  xAxisLabel = 'Floor plans';
   showYAxisLabel = true;
-  yAxisLabel = 'Population';
+  yAxisLabel = 'Beacon Count';
 
 
   colorScheme = {

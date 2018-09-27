@@ -3178,9 +3178,9 @@ var PieAdvancedComponentExport = (function () {
         this.gradient = false;
         this.showLegend = true;
         this.showXAxisLabel = true;
-        this.xAxisLabel = 'Country';
+        this.xAxisLabel = 'Floor plans';
         this.showYAxisLabel = true;
-        this.yAxisLabel = 'Population';
+        this.yAxisLabel = 'Beacon Count';
         this.colorScheme = {
             domain: ['#a8385d', '#7aa3e5', '#a27ea8', '#aae3f5', '#adcded', '#a95963', '#8796c0', '#7ed3ed', '#50abcc', '#ad6886']
         };
