@@ -38,8 +38,8 @@ router.post('/authenticate', (req, res, next) => {
             if (err) {
                 //throw err;
                 console.log(err);
-                res.send("Error occurred comparing password: " + err);
-                return;
+                return res.send("Error occurred comparing password: " + err);
+
             }
 
             if (isMatch) {
@@ -85,8 +85,8 @@ router.get('/projects', passport.authenticate('jwt', {session: false}), (req, re
 
                 if (err) {
                     console.error(err, 'Uncaught Exception thrown');
-                    res.send([]);
-                    return
+                    return res.send([]);
+
                 }
 
                 var projects = [];
@@ -127,18 +127,18 @@ router.get('/projects', passport.authenticate('jwt', {session: false}), (req, re
                     projects.push(p);
                 });
 
-                res.send(projects);
+                return  res.send(projects);
             });
 
 
         }
         else {
-            res.send({success: false, msg: 'Not Authorized'});
+            return  res.send({success: false, msg: 'Not Authorized'});
         }
     }
     catch (e) {
         console.log(e);
-        res.send(500);
+        return  res.send(500);
     }
 
 
@@ -173,10 +173,10 @@ router.post('/upload/:projectId/:floorplanId', passport.authenticate('jwt', {ses
                         (err, project, floorplan) => {
 
                             if (err != null) {
-                                res.send({success: false, msg: err.message});
+                                return  res.send({success: false, msg: err.message});
                             }
 
-                            res.send({success: true, beacons: floorplan.beacons});
+                            return  res.send({success: true, beacons: floorplan.beacons});
 
 
                         });
@@ -187,12 +187,12 @@ router.post('/upload/:projectId/:floorplanId', passport.authenticate('jwt', {ses
 
         }
         else {
-            res.send({success: false, msg: "Not Permitted"});
+            return  res.send({success: false, msg: "Not Permitted"});
         }
     }
 
     else {
-        res.sendStatus(401);
+        return  res.sendStatus(401);
     }
 
 });
@@ -212,10 +212,10 @@ router.post('/update/beacon/:projectId/:floorplanId/:beaconId', passport.authent
             Project.updateBeaconInFloorPlan(ObjectId(req.params.floorplanId), ObjectId(req.params.projectId), beacon, (err, beacon) => {
 
                 if (err) {
-                    res.send({success: false, msg: err.message});
+                    return res.send({success: false, msg: err.message});
                 }
                 else {
-                    res.send({success: true, beacon: beacon});
+                    return  res.send({success: true, beacon: beacon});
 
                 }
 
@@ -224,12 +224,12 @@ router.post('/update/beacon/:projectId/:floorplanId/:beaconId', passport.authent
 
         }
         else {
-            res.send({success: false, msg: "Not Permitted"});
+            return  res.send({success: false, msg: "Not Permitted"});
         }
     }
 
     else {
-        res.sendStatus(401);
+        return res.sendStatus(401);
     }
 
 });
@@ -245,10 +245,10 @@ router.post('/sendmessage/:projectId/:floorplanId', passport.authenticate('jwt',
         Content.addContentToFloorPlan(ObjectId(req.params.floorplanId), ObjectId(req.params.projectId), presentUser._id, req.body, (err) => {
 
             if (err) {
-                res.send({success: false, msg: err.message});
+                return res.send({success: false, msg: err.message});
             }
             else {
-                res.send({success: true});
+                return  res.send({success: true});
 
             }
 
@@ -257,7 +257,7 @@ router.post('/sendmessage/:projectId/:floorplanId', passport.authenticate('jwt',
     }
 
     else {
-        res.sendStatus(401);
+        return res.sendStatus(401);
     }
 
 });
@@ -382,14 +382,14 @@ router.post('/sdk/push', (req, res) => {
     let fcm = req.body.fcm;
 
     if (token === "") {
-        res.send({success: false, msg: "invalid project token"});
+        return res.send({success: false, msg: "invalid project token"});
     }
     else {
         Project.getProjectForToken(token, (err, projects) => {
 
             if(err)
             {
-                res.send({success: false, msg: "invalid token, project for token does not exist "+err.message});
+                return res.send({success: false, msg: "invalid token, project for token does not exist "+err.message});
             }
             else{
 
@@ -399,9 +399,9 @@ router.post('/sdk/push', (req, res) => {
 
                 ProjectToken.insertTokenForProject(project._id, fcm, (err)=>{
                     if(err)
-                        res.send({success: false, msg: err.message});
+                        return res.send({success: false, msg: err.message});
                     else
-                        res.send({success: true});
+                        return res.send({success: true});
                 });
 
             }
@@ -425,9 +425,9 @@ router.post('/sdk/beaconseen', (req, res) => {
         Project.updateBeaconSeenInFloorplan(token, ObjectId(beacon_id), telemetry, (err) => {
 
             if(err)
-                res.send({success: false, msg: err.message});
+                return res.send({success: false, msg: err.message});
             else
-                res.send({success: true});
+                return  res.send({success: true});
 
 
         });
