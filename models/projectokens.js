@@ -18,8 +18,8 @@ const ProjectTokenSchema =mongoose.Schema({
     },
     tokens: [
             {
-                type: String,
-                unique: true
+                type: String
+
             }
     ],
     admin_Tokens: [
@@ -80,13 +80,31 @@ module.exports.insertTokenForProject = (projectId,apiToken,callback)=>{
         }
         else
         {
-            projects[0].tokens.push(apiToken);
-            projects[0].save((err)=>{
-                if(err)
-                    callback(err);
-                else
-                    callback(null);
-            })
+
+
+            let unique = true;
+            for(let i=0; i< projects[0].tokens.length; i++){
+                if(projects[0].tokens[i] === apiToken){
+                    unique = false;
+                    break;
+                }
+            }
+
+            if(unique) {
+                projects[0].tokens.push(apiToken);
+
+                projects[0].save((err)=>{
+                    if(err)
+                        callback(err);
+                    else
+                        callback(null);
+                })
+            }
+            else
+            {
+                callback("Token already exists");
+            }
+
         }
     });
 
