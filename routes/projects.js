@@ -104,9 +104,8 @@ router.get('/:id', passport.authenticate('jwt', {session:false}), (req, res, nex
             }
             else
             {
-                try{
-
                 let images = [];
+                try{
 
                 for(let i = 0; i < project.floorPlans.length; i++)
                 {
