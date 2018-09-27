@@ -277,14 +277,14 @@ router.post('/sdk/update', (req, res) => {
     let content_update = req.body.content_update;
 
     if (token === "") {
-        res.send({success: false, msg: "no token"});
+       return res.send({success: false, msg: "no token"});
     }
     else {
 
         Project.getProjectForToken(token, (err, projects) => {
 
             if (err) {
-                res.send({success: false, msg: "invalid Token"});
+                return res.send({success: false, msg: "invalid Token"});
             }
             else {
                 let data = {
@@ -353,7 +353,7 @@ router.post('/sdk/update', (req, res) => {
                             }
 
 
-                            res.send({success: true, data: data});
+                            return res.send({success: true, data: data});
                         });
 
 
@@ -361,10 +361,8 @@ router.post('/sdk/update', (req, res) => {
                 }
                 else
                 {
-                    res.send({success: false, msg: "project not found"});
+                   return res.send({success: false, msg: "project not found"});
                 }
-
-
 
 
             }
