@@ -23,7 +23,7 @@ router.get('/:id/project/:projectId', passport.authenticate('jwt', {session:fals
             if(err)
             {
                 console.error(err);
-                res.send({success: false, msg: err.message});
+                return res.send({success: false, msg: err.message});
             }
             else
             {
@@ -39,14 +39,14 @@ router.get('/:id/project/:projectId', passport.authenticate('jwt', {session:fals
                 result.floorplan = floorplan;
                 result.project = JSON.parse(JSON.stringify(project));
 
-                res.send({success: true, data: result});
+                return res.send({success: true, data: result});
             }
 
         });
     }
     else
     {
-        res.send({success: false, msg: 'Not Authorized'});
+        return res.send({success: false, msg: 'Not Authorized'});
     }
 
 
@@ -70,7 +70,7 @@ router.delete('/:id/project/:projectId', passport.authenticate('jwt', {session:f
                 if(err)
                 {
                     console.error(err);
-                    res.send({success: false, msg: err.message});
+                    return res.send({success: false, msg: err.message});
                 }
                 else
                 {
@@ -82,7 +82,7 @@ router.delete('/:id/project/:projectId', passport.authenticate('jwt', {session:f
                         if(err)
                         {
                             console.error(err);
-                            res.send({success: false, msg: err.message});
+                            return res.send({success: false, msg: err.message});
                         }
                         else
                         {
@@ -92,7 +92,7 @@ router.delete('/:id/project/:projectId', passport.authenticate('jwt', {session:f
                                     console.log(error);
                                 }
                             });
-                            res.send({success: true});
+                            return res.send({success: true});
 
                         }
                     });
@@ -108,12 +108,12 @@ router.delete('/:id/project/:projectId', passport.authenticate('jwt', {session:f
         }
         else
         {
-            res.send({success: false, msg: "Not Permitted"});
+            return res.send({success: false, msg: "Not Permitted"});
         }
     }
 
     else{
-        res.sendStatus(401);
+        return res.sendStatus(401);
     }
 
 });
@@ -133,11 +133,11 @@ router.post('/:id/project/:projectId/beacons', passport.authenticate('jwt', {ses
 
                 if(err)
                 {
-                    res.send({success: false, msg: err.msg});
+                    return res.send({success: false, msg: err.msg});
                 }
                 else
                 {
-                    res.send({success: true});
+                    return res.send({success: true});
                 }
 
             });
@@ -145,12 +145,12 @@ router.post('/:id/project/:projectId/beacons', passport.authenticate('jwt', {ses
         }
         else
         {
-            res.send({success: false, msg: "Not Permitted"});
+            return res.send({success: false, msg: "Not Permitted"});
         }
     }
 
     else{
-        res.sendStatus(401);
+        return res.sendStatus(401);
     }
 
 });
@@ -171,11 +171,11 @@ router.post('/:id/project/:projectId/name', passport.authenticate('jwt', {sessio
 
                 if(err)
                 {
-                    res.send({success: false, msg: err.message});
+                    return res.send({success: false, msg: err.message});
                 }
                 else
                 {
-                    res.send({success: true});
+                    return res.send({success: true});
 
                 }
 
@@ -184,12 +184,12 @@ router.post('/:id/project/:projectId/name', passport.authenticate('jwt', {sessio
         }
         else
         {
-            res.send({success: false, msg: "Not Permitted"});
+            return res.send({success: false, msg: "Not Permitted"});
         }
     }
 
     else{
-        res.sendStatus(401);
+        return res.sendStatus(401);
     }
 
 });
@@ -210,11 +210,11 @@ router.delete('/:id/project/:projectId/beacon/:beaconId', passport.authenticate(
 
                 if(err)
                 {
-                    res.send({success: false, msg: err.message});
+                    return  res.send({success: false, msg: err.message});
                 }
                 else
                 {
-                    res.send({success: true});
+                    return res.send({success: true});
 
                 }
 
@@ -223,12 +223,12 @@ router.delete('/:id/project/:projectId/beacon/:beaconId', passport.authenticate(
         }
         else
         {
-            res.send({success: false, msg: "Not Permitted"});
+            return res.send({success: false, msg: "Not Permitted"});
         }
     }
 
     else{
-        res.sendStatus(401);
+        return res.sendStatus(401);
     }
 
 });

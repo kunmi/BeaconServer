@@ -36,17 +36,17 @@ router.post('/register', passport.authenticate('jwt', {session:false}), (req, re
 
             if (err) {
                 console.error(err, 'Uncaught Exception thrown');
-                res.json({success: false, msg: 'Failed to register user'});
+                return  res.json({success: false, msg: 'Failed to register user'});
             }
             else {
-                res.json({success: true, msg: 'User registered'})
+                return res.json({success: true, msg: 'User registered'})
             }
 
         });
     }
     else
     {
-        res.json({success:false, msg: 'NotAuthorized'});
+        return res.json({success:false, msg: 'NotAuthorized'});
     }
 });
 
@@ -78,8 +78,8 @@ router.post('/authenticate', (req, res, next) => {
                 {
                     //throw err;
                     console.log(err);
-                    res.send("Error occurred comparing password: "+err);
-                    return;
+                    return res.send("Error occurred comparing password: "+err);
+
                 }
 
                 if(isMatch)
@@ -142,28 +142,32 @@ router.get('/', passport.authenticate('jwt', {session:false}), (req, res, next) 
 
             if (err) {
                 console.error(err, 'Uncaught Exception thrown');
-                res.send([]);
-                return
+                return res.send([]);
+
             }
 
+            else {
 
-            var users = [];
 
-            result.forEach(function (user) {
-                users.push({
-                    _id: user._id,
-                    name: user.name,
-                    email: user.email,
-                    username: user.username,
+                var users = [];
+
+                result.forEach(function (user) {
+                    users.push({
+                        _id: user._id,
+                        name: user.name,
+                        email: user.email,
+                        username: user.username,
+                    });
                 });
-            });
 
-            res.send(users);
+                return res.send(users);
+            }
+
         });
     }
     else
     {
-        res.send({success: false, msg: 'Not Authorized'});
+        return res.send({success: false, msg: 'Not Authorized'});
     }
 
 });
@@ -176,12 +180,12 @@ router.get('/:id', passport.authenticate('jwt', {session:false}), (req, res, nex
             if(err)
             {
                 console.error(err);
-                res.send({success: false, msg: err.message});
+                return res.send({success: false, msg: err.message});
             }
             else
             {
                 user.password = ":D12345character007!!!@";
-                res.send({success: true, user: user});
+                return res.send({success: true, user: user});
             }
 
         });
@@ -191,7 +195,7 @@ router.get('/:id', passport.authenticate('jwt', {session:false}), (req, res, nex
     }
     else
     {
-        res.send({success: false, msg: 'Not Authorized'});
+        return res.send({success: false, msg: 'Not Authorized'});
     }
 
 });
@@ -228,11 +232,11 @@ router.patch('/:id', passport.authenticate('jwt', {session:false}), (req, res, n
                 if(err)
                 {
                     console.error(err);
-                    res.send({success: false, msg: err.message});
+                    return res.send({success: false, msg: err.message});
                 }
                 else
                 {
-                    res.send({success: true, user: user});
+                    return res.send({success: true, user: user});
                 }
 
             });
@@ -240,7 +244,7 @@ router.patch('/:id', passport.authenticate('jwt', {session:false}), (req, res, n
         }
         else
         {
-            res.send({success: false, msg: "Not Permitted"});
+            return res.send({success: false, msg: "Not Permitted"});
         }
     }
 
@@ -264,22 +268,22 @@ router.delete('/:id', passport.authenticate('jwt', {session:false}), (req, res, 
                 if(err)
                 {
                     console.error(err);
-                    res.send({success: false, msg: err.message});
+                    return res.send({success: false, msg: err.message});
                 }
                 else
                 {
-                    res.send({success: true});
+                    return res.send({success: true});
                 }
             });
         }
         else
         {
-            res.send({success: false, msg: "Not Permitted"});
+            return res.send({success: false, msg: "Not Permitted"});
         }
     }
 
     else{
-        res.send(401);
+        return res.send(401);
     }
 
 });

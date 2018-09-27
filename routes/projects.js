@@ -32,10 +32,10 @@ router.post('/register', passport.authenticate('jwt', {session:false}), (req, re
             Project.addProject(newProject, (err, project) => {
                 if (err) {
                     console.error(err, 'Uncaught Exception thrown');
-                    res.json({success: false, msg: 'Failed to register Project'});
+                    return res.json({success: false, msg: 'Failed to register Project'});
                 }
                 else {
-                    res.json({success: true, msg: 'Project registered'})
+                    return  res.json({success: true, msg: 'Project registered'})
                 }
             });
 
@@ -44,7 +44,7 @@ router.post('/register', passport.authenticate('jwt', {session:false}), (req, re
     }
     else
     {
-        res.json({success:false, msg: 'NotAuthorized'});
+        return  res.json({success:false, msg: 'NotAuthorized'});
     }
 });
 
@@ -62,8 +62,7 @@ router.get('/', passport.authenticate('jwt', {session:false}), (req, res, next) 
 
                 if (err) {
                     console.error(err, 'Uncaught Exception thrown');
-                    res.send([]);
-                    return
+                    return  res.send([]);
                 }
 
                 var projects = [];
@@ -77,14 +76,14 @@ router.get('/', passport.authenticate('jwt', {session:false}), (req, res, next) 
                     });
                 });
 
-                res.send(projects);
+                return  res.send(projects);
             });
 
         }
     }
     else
     {
-        res.send({success: false, msg: 'Not Authorized'});
+        return res.send({success: false, msg: 'Not Authorized'});
     }
 
 });
@@ -100,7 +99,7 @@ router.get('/:id', passport.authenticate('jwt', {session:false}), (req, res, nex
             if(err)
             {
                 //console.error(err);
-                res.send({success: false, msg: err.message});
+                return  res.send({success: false, msg: err.message});
             }
             else
             {
@@ -122,7 +121,7 @@ router.get('/:id', passport.authenticate('jwt', {session:false}), (req, res, nex
                 project.floorPlans = images;
 
 
-                res.send({success: true, project: project});
+                return res.send({success: true, project: project});
             }
 
         });
@@ -132,7 +131,7 @@ router.get('/:id', passport.authenticate('jwt', {session:false}), (req, res, nex
     }
     else
     {
-        res.send({success: false, msg: 'Not Authorized'});
+        return res.send({success: false, msg: 'Not Authorized'});
     }
 
 });
@@ -156,23 +155,23 @@ router.patch('/:id', passport.authenticate('jwt', {session:false}), (req, res, n
                     if(err)
                     {
                         console.error(err);
-                        res.send({success: false, msg: err.message});
+                        return  res.send({success: false, msg: err.message});
                     }
                     else
                     {
-                        res.send({success: true, project: project});
+                        return   res.send({success: true, project: project});
 
                     }
                 });
         }
         else
         {
-            res.send({success: false, msg: "Not Permitted"});
+            return res.send({success: false, msg: "Not Permitted"});
         }
     }
 
     else{
-        res.send(401);
+        return res.send(401);
     }
 
 });
@@ -190,24 +189,24 @@ router.get('/getprojectid/:id', passport.authenticate('jwt', {session: false}), 
 
                 if (err) {
                     console.error(err, 'Uncaught Exception thrown');
-                    res.send([]);
+                    return res.send([]);
                 }
 
                 else
                 {
-                    res.send({success: true, project: project});
+                    return  res.send({success: true, project: project});
                 }
             });
 
 
         }
         else {
-            res.send({success: false, msg: 'Not Authorized'});
+            return  res.send({success: false, msg: 'Not Authorized'});
         }
     }
     catch (e) {
         console.log(e);
-        res.send(500);
+        return  res.send(500);
     }
 
 
@@ -231,22 +230,22 @@ router.patch('/:id/gcm', passport.authenticate('jwt', {session:false}), (req, re
                 if(err)
                 {
                     console.log(err.message);
-                    res.send({success: false, msg: err.message});
+                    return  res.send({success: false, msg: err.message});
                 }
                 else {
-                    res.send({success: true});
+                    return res.send({success: true});
                 }
 
             });
         }
         else
         {
-            res.send({success: false, msg: "Not Permitted"});
+            return res.send({success: false, msg: "Not Permitted"});
         }
     }
 
     else{
-        res.send(401);
+        return res.send(401);
     }
 
 });
@@ -265,23 +264,23 @@ router.delete('/:id', passport.authenticate('jwt', {session:false}), (req, res, 
                 if(err)
                 {
                     console.error(err);
-                    res.send({success: false, msg: err.message});
+                    return res.send({success: false, msg: err.message});
                 }
                 else
                 {
-                    res.send({success: true});
+                    return res.send({success: true});
 
                 }
             });
         }
         else
         {
-            res.send({success: false, msg: "Not Permitted"});
+            return res.send({success: false, msg: "Not Permitted"});
         }
     }
 
     else{
-        res.sendStatus(401);
+        return  res.sendStatus(401);
     }
 
 });
@@ -301,7 +300,7 @@ router.post('/:id/adduser', passport.authenticate('jwt', {session:false}), (req,
 
                 if(err)
                 {
-                    res.send({success: false, msg : err.message});
+                    return res.send({success: false, msg : err.message});
                     console.error(err);
                 }
 
@@ -311,7 +310,7 @@ router.post('/:id/adduser', passport.authenticate('jwt', {session:false}), (req,
 
                             if(err)
                             {
-                                res.send({success: false, msg : err.message});
+                                return  res.send({success: false, msg : err.message});
                             }
                             else
                             {
@@ -320,18 +319,18 @@ router.post('/:id/adduser', passport.authenticate('jwt', {session:false}), (req,
                                     Project.getProjectByID(projectId, (err, project)=>{
                                         if(err)
                                         {
-                                            res.send({success:false, msg : "Error occurred retrieving updated list"});
+                                            return res.send({success:false, msg : "Error occurred retrieving updated list"});
                                         }
                                         else
                                         {
-                                            res.send({success: true, users : project.users});
+                                            return res.send({success: true, users : project.users});
                                         }
                                     });
 
                                 }
                                 else
                                 {
-                                    res.send({success: false, msg : "user already added"});
+                                    return res.send({success: false, msg : "user already added"});
                                 }
                             }
                     });
@@ -344,13 +343,13 @@ router.post('/:id/adduser', passport.authenticate('jwt', {session:false}), (req,
         }
         else
         {
-            res.send({success: false, msg: "Not Permitted"});
+            return res.send({success: false, msg: "Not Permitted"});
         }
 
     }
     else
     {
-        res.sendStatus(401);
+        return res.sendStatus(401);
     }
 
 
@@ -372,8 +371,9 @@ router.post('/:id/removeuser', passport.authenticate('jwt', {session:false}), (r
 
                 if(err)
                 {
-                    res.send({success: false, msg : err.message});
                     console.error(err);
+                    return res.send({success: false, msg : err.message});
+
                 }
 
                 else
@@ -382,13 +382,13 @@ router.post('/:id/removeuser', passport.authenticate('jwt', {session:false}), (r
 
                         if(err)
                         {
-                            res.send({success: false, msg : err.message});
+                            return res.send({success: false, msg : err.message});
                         }
                         else
                         {
                             if(nmods>0)
                             {
-                                res.send({success: true});
+                                return res.send({success: true});
 
 
                                 /* EXTRA DB call not needed
@@ -408,7 +408,7 @@ router.post('/:id/removeuser', passport.authenticate('jwt', {session:false}), (r
                             }
                             else
                             {
-                                res.send({success: false, msg : "user already removed"});
+                                return res.send({success: false, msg : "user already removed"});
                             }
                         }
                     });
@@ -421,13 +421,13 @@ router.post('/:id/removeuser', passport.authenticate('jwt', {session:false}), (r
         }
         else
         {
-            res.send({success: false, msg: "Not Permitted"});
+            return res.send({success: false, msg: "Not Permitted"});
         }
 
     }
     else
     {
-        res.sendStatus(401);
+        return  res.sendStatus(401);
     }
 
 
@@ -452,8 +452,9 @@ router.post('/:id/upload', passport.authenticate('jwt', {session:false}), (req, 
 
                 if(err)
                 {
-                    res.send({success: false, msg : err.message});
                     console.error(err);
+                    return res.send({success: false, msg : err.message});
+
                 }
                 else
                 {
@@ -498,7 +499,7 @@ router.post('/:id/upload', passport.authenticate('jwt', {session:false}), (req, 
                         if(err)
                         {
                             console.log("Error occurred "+ err.message)
-                            res.send({success: false, msg: err.message});
+                            return res.send({success: false, msg: err.message});
                         }
                         else
                         {
@@ -506,19 +507,19 @@ router.post('/:id/upload', passport.authenticate('jwt', {session:false}), (req, 
 
                                 if(err)
                                 {
-                                    res.send({success: false, msg : err.message});
+                                    return res.send({success: false, msg : err.message});
                                 }
                                 else
                                 {
                                     if(nmods>0)
                                     {
-                                        res.send({success: true});
+                                        return res.send({success: true});
 
 
                                     }
                                     else
                                     {
-                                        res.send({success: false, msg : "Did not upload for some odd reasons"});
+                                        return res.send({success: false, msg : "Did not upload for some odd reasons"});
                                     }
                                 }
                             });
@@ -534,13 +535,13 @@ router.post('/:id/upload', passport.authenticate('jwt', {session:false}), (req, 
         }
         else
         {
-            res.send({success: false, msg: "Not Permitted"});
+            return res.send({success: false, msg: "Not Permitted"});
         }
 
     }
     else
     {
-        res.sendStatus(401);
+        return res.sendStatus(401);
     }
 
 
@@ -558,7 +559,7 @@ router.get('/:id/images', passport.authenticate('jwt', {session:false}), (req, r
             if(err)
             {
                 console.error(err);
-                res.send({success: false, msg: err.message});
+                return res.send({success: false, msg: err.message});
             }
             else
             {
@@ -569,7 +570,7 @@ router.get('/:id/images', passport.authenticate('jwt', {session:false}), (req, r
                      images.push( new Image(floorPlan));
                  }
 
-                res.send({success: true, images: images});
+                return res.send({success: true, images: images});
             }
 
         });
@@ -579,7 +580,7 @@ router.get('/:id/images', passport.authenticate('jwt', {session:false}), (req, r
     }
     else
     {
-        res.send({success: false, msg: 'Not Authorized'});
+        return res.send({success: false, msg: 'Not Authorized'});
     }
 
 });
@@ -598,8 +599,8 @@ router.get('/foruser/:userId', passport.authenticate('jwt', {session:false}), (r
 
             if (err) {
                 console.error(err, 'Uncaught Exception thrown');
-                res.send([]);
-                return
+                return  res.send([]);
+
             }
 
             var projects = [];
@@ -627,14 +628,14 @@ router.get('/foruser/:userId', passport.authenticate('jwt', {session:false}), (r
                 });
             });
 
-            res.send(projects);
+            return res.send(projects);
         });
 
 
     }
     else
     {
-        res.send({success: false, msg: 'Not Authorized'});
+        return res.send({success: false, msg: 'Not Authorized'});
     }
 
 });

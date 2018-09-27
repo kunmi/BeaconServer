@@ -23,26 +23,26 @@ router.get('', passport.authenticate('jwt', {session:false}), (req, res, next) =
                 if(err)
                 {
                     console.error(err);
-                    res.send({success: false, msg: err.message});
+                    return res.send({success: false, msg: err.message});
                 }
                 else
                 {
                     let c = JSON.parse(JSON.stringify(contents));
-                    res.send({success: true, data: c});
+                    return res.send({success: true, data: c});
                 }
 
             });
         }
         else
         {
-            res.send({success: false, msg: 'Not Authorized'});
+            return  res.send({success: false, msg: 'Not Authorized'});
         }
 
 
     }
     else
     {
-        res.send({success: false, msg: 'Not Logged in'});
+        return res.send({success: false, msg: 'Not Logged in'});
     }
 
 
@@ -63,11 +63,11 @@ router.post('/floorplan/:floorplanId/project/:projectId/', passport.authenticate
 
                 if(err)
                 {
-                    res.send({success: false, msg: err.message});
+                    return  res.send({success: false, msg: err.message});
                 }
                 else
                 {
-                    res.send({success: true});
+                    return res.send({success: true});
 
                 }
 
@@ -76,7 +76,7 @@ router.post('/floorplan/:floorplanId/project/:projectId/', passport.authenticate
     }
 
     else{
-        res.sendStatus(401);
+        return res.sendStatus(401);
     }
 
 });
@@ -120,48 +120,52 @@ router.get('/project/:projectId', passport.authenticate('jwt', {session:false}),
                 */
 
 
+                if(project) {
+                    Content.getContentsByProject(ObjectId(project._id), (err, contents)=>{
 
-                Content.getContentsByProject(ObjectId(project._id), (err, contents)=>{
 
+                        if(err)
+                        {
+                            res.send({success: false, msg: err.message});
+                        }
+                        else
+                        {
+                            let data = [];
 
-                    if(err)
-                    {
-                        res.send({success: false, msg: err.message});
-                    }
-                    else
-                    {
-                        let data = [];
+                            contents.forEach((c)=>{
+                                let content = {
+                                    _id: c._id,
+                                    title: c.title,
+                                    body: c.body,
+                                    beacons: c.beacons,
+                                    areas: c.areas,
+                                    published: c.published
+                                };
 
-                        contents.forEach((c)=>{
-                            let content = {
-                                _id: c._id,
-                                title: c.title,
-                                body: c.body,
-                                beacons: c.beacons,
-                                areas: c.areas,
-                                published: c.published
-                            };
+                                project.floorPlans.forEach((floorplan)=>{
 
-                            project.floorPlans.forEach((floorplan)=>{
+                                    if(JSON.stringify(floorplan._id) === JSON.stringify(c.floorplan_id))
+                                    {
+                                        content.floorplan_name = floorplan.name;
+                                        content.floorplan_id = floorplan._id;
+                                    }
 
-                                if(JSON.stringify(floorplan._id) === JSON.stringify(c.floorplan_id))
-                                {
-                                    content.floorplan_name = floorplan.name;
-                                    content.floorplan_id = floorplan._id;
-                                }
+                                });
+
+                                data.push(content);
+
 
                             });
 
-                            data.push(content);
+                            res.send({success: true, contents: data});
+                        }
 
 
-                        });
-
-                        res.send({success: true, contents: data});
-                    }
-
-
-                });
+                    });
+                }
+                else {
+                   return res.send({success: false, msg: "Project was null"});
+                }
 
 
             }
@@ -173,7 +177,7 @@ router.get('/project/:projectId', passport.authenticate('jwt', {session:false}),
     }
     else
     {
-        res.send({success: false, msg: 'Not Authorized'});
+        return res.send({success: false, msg: 'Not Authorized'});
     }
 
 });
@@ -190,16 +194,16 @@ router.get('/details/:contentId', passport.authenticate('jwt', {session:false}),
         Content.getContentDetails(ObjectId(req.params.contentId), (err, c)=>{
 
             if(err)
-                res.send({success: false, msg: err.message});
+                return res.send({success: false, msg: err.message});
             else
-                res.send({success: true, content: c});
+                return res.send({success: true, content: c});
 
         });
 
     }
     else
     {
-        res.send({success: false, msg: 'Not Authorized'});
+        return res.send({success: false, msg: 'Not Authorized'});
     }
 
 });
