@@ -12,9 +12,15 @@ export class HomeComponent implements OnInit {
   constructor(private authService : AuthService,
               private router: Router) {
 
+    //console.log("Hi");
+
     if(authService.loggedIn()){
-      this.router.navigate(['dashboard']);
+
+      //console.log("Logged In");
+      this.router.navigate(['/dashboard']);
     }
+
+
 
   }
 

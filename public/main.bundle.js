@@ -54,7 +54,7 @@ var appRoutes = [
     { path: 'register', component: __WEBPACK_IMPORTED_MODULE_4__components_dashboard_admin_dash_users_register_register_component__["a" /* RegisterComponent */] },
     { path: 'login', component: __WEBPACK_IMPORTED_MODULE_3__components_login_login_component__["a" /* LoginComponent */] },
     { path: 'dashboard', loadChildren: 'app/components/dashboard/dashboard.module#DashboardModule' },
-    { path: 'profile', component: __WEBPACK_IMPORTED_MODULE_6__components_dashboard_client_profile_profile_component__["a" /* ProfileComponent */], canActivate: [__WEBPACK_IMPORTED_MODULE_5__guards_auth_guard__["a" /* AuthGuard */]] },
+    { path: 'profile', component: __WEBPACK_IMPORTED_MODULE_6__components_dashboard_client_profile_profile_component__["a" /* ProfileComponent */], canActivate: [__WEBPACK_IMPORTED_MODULE_5__guards_auth_guard__["a" /* AuthGuard */]] }
 ];
 var AppRoutingModule = (function () {
     function AppRoutingModule() {
@@ -172,7 +172,7 @@ var AppModule = (function () {
                 __WEBPACK_IMPORTED_MODULE_15__app_routing_module__["a" /* AppRoutingModule */],
                 __WEBPACK_IMPORTED_MODULE_16__components_dashboard_dashboard_module__["DashboardModule"],
                 __WEBPACK_IMPORTED_MODULE_5__angular_platform_browser_animations__["a" /* BrowserAnimationsModule */],
-                __WEBPACK_IMPORTED_MODULE_2__angular_forms__["j" /* ReactiveFormsModule */] // NOt sure I need this --> for Material
+                __WEBPACK_IMPORTED_MODULE_2__angular_forms__["j" /* ReactiveFormsModule */]
             ],
             providers: [__WEBPACK_IMPORTED_MODULE_10__services_validate_service__["a" /* ValidateService */], __WEBPACK_IMPORTED_MODULE_11__services_auth_service__["a" /* AuthService */], __WEBPACK_IMPORTED_MODULE_12__guards_auth_guard__["a" /* AuthGuard */], __WEBPACK_IMPORTED_MODULE_14__models_Values__["a" /* Values */]],
             bootstrap: [__WEBPACK_IMPORTED_MODULE_6__app_component__["a" /* AppComponent */]]
@@ -3647,6 +3647,8 @@ module.exports = "<main class=\"jumbotron text-center\">\n  <h1>Beacon Managemen
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return HomeComponent; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/esm5/core.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services_auth_service__ = __webpack_require__("../../../../../src/app/services/auth.service.ts");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_router__ = __webpack_require__("../../../router/esm5/router.js");
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -3657,8 +3659,17 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 
+
+
 var HomeComponent = (function () {
-    function HomeComponent() {
+    function HomeComponent(authService, router) {
+        //console.log("Hi");
+        this.authService = authService;
+        this.router = router;
+        if (authService.loggedIn()) {
+            //console.log("Logged In");
+            this.router.navigate(['/dashboard']);
+        }
     }
     HomeComponent.prototype.ngOnInit = function () {
     };
@@ -3668,7 +3679,8 @@ var HomeComponent = (function () {
             template: __webpack_require__("../../../../../src/app/components/home/home.component.html"),
             styles: [__webpack_require__("../../../../../src/app/components/home/home.component.css")]
         }),
-        __metadata("design:paramtypes", [])
+        __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1__services_auth_service__["a" /* AuthService */],
+            __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */]])
     ], HomeComponent);
     return HomeComponent;
 }());
@@ -5005,8 +5017,6 @@ var AuthService = (function () {
     }
     AuthService.prototype.authenticateUser = function (user) {
         var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_common_http__["c" /* HttpHeaders */]();
-        //this.loadToken();
-        //headers = headers.append('authorization', this.authToken);
         headers = headers.append('Content-Type', 'application/json');
         return this.http.post(this.values.getServiceEndPoint() + 'users/authenticate', user, { headers: headers })
             .map(function (res) { return res; });
