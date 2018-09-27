@@ -321,7 +321,7 @@ export class DialogAddContentComponent implements OnInit {
   }
 
   getAsFormattedDate(value){
-    return (new Date(value)).toUTCString();
+    return (new Date(value)).toString();
   }
 
 

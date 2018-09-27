@@ -2546,7 +2546,7 @@ var DialogAddContentComponent = (function () {
         return this.contentAreaId == null;
     };
     DialogAddContentComponent.prototype.getAsFormattedDate = function (value) {
-        return (new Date(value)).toUTCString();
+        return (new Date(value)).toString();
     };
     DialogAddContentComponent = __decorate([
         Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
