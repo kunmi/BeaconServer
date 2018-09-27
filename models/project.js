@@ -93,7 +93,7 @@ module.exports.deleteProject = function (id, callback) {
         else
         {
             callback(null);
-            Project.sendPushForProject(id, 1);
+            //Project.sendPushForProject(id, 1);
         }
 
     });
@@ -562,7 +562,7 @@ module.exports.sendPushForProject = function(project_id, type, callback=null){
                     // Type 3 - Content Update
 
                     let serverKey = project.push.gcm;
-                    var registrationTokens = tokens;
+                    let registrationTokens = tokens;
 
 
                     request({
