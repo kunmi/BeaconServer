@@ -24,8 +24,7 @@ const ProjectTokenSchema =mongoose.Schema({
     ],
     admin_Tokens: [
         {
-            type: String,
-            unique: true
+            type: String
         }
     ]
 });
