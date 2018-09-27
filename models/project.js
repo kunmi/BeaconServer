@@ -120,7 +120,7 @@ module.exports.addUserToProject =  function(id, user, callback){
         }
     }).then((raw) => {
         callback(null,raw.nModified);
-        Project.sendPushForProject(id, 1);
+        //Project.sendPushForProject(id, 1);
     }).catch(error=>{
             callback(error, null);
     });
@@ -142,7 +142,7 @@ module.exports.removeUserFromProject =  function(id, user, callback){
         }
     }).then((raw) => {
         callback(null,raw.nModified);
-        Project.sendPushForProject(id, 1);
+        //Project.sendPushForProject(id, 1);
     }).catch(error=>{
         callback(error, null);
     });
@@ -196,7 +196,7 @@ module.exports.saveFloorPlanName = function (id, projectId, name, callback) {
         .then((raw) =>
             {
                 callback(null,raw.nModified);
-                Project.sendPushForProject(id, 1);
+                //Project.sendPushForProject(id, 1);
             })
         .catch(error=>{
             callback(error, null);

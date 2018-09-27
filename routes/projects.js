@@ -104,6 +104,8 @@ router.get('/:id', passport.authenticate('jwt', {session:false}), (req, res, nex
             }
             else
             {
+                try{
+
                 let images = [];
 
                 for(let i = 0; i < project.floorPlans.length; i++)
@@ -111,8 +113,15 @@ router.get('/:id', passport.authenticate('jwt', {session:false}), (req, res, nex
                     let floorPlan = project.floorPlans[i];
                     images.push(new Image(floorPlan));
                 }
+                }
+                catch (e) {
+                    console.log(e);
+                }
+
+
                 project = JSON.parse(JSON.stringify(project));
                 project.floorPlans = images;
+
 
                 res.send({success: true, project: project});
             }
